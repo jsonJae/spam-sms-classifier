@@ -218,31 +218,72 @@ export default function Home() {
       {/* Hero */}
       <section
         id="top"
-        className="relative overflow-hidden border-b-2 border-ink bg-[#080a08] text-paper pt-10 pb-14 sm:pt-16 sm:pb-20 lg:pt-20 lg:pb-24"
+        className="relative overflow-hidden border-b-2 border-ink bg-[#080a08] text-paper pt-12 pb-16 sm:pt-16 sm:pb-20 lg:pt-20 lg:pb-24"
       >
+        {/* Animated background ambient glow spheres */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute -right-20 -top-20 size-[520px] rounded-full bg-primary/10 blur-[140px]"
+          className="pointer-events-none absolute -right-20 -top-20 size-[540px] rounded-full bg-primary/15 blur-[140px] motion-safe:animate-[pulse-glow_6s_ease-in-out_infinite]"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -left-28 bottom-0 size-[420px] rounded-full bg-accent/10 blur-[130px] motion-safe:animate-[pulse-glow_8s_ease-in-out_infinite_2s]"
+        />
+
+        {/* Subtle grid background overlay */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(243,239,228,0.06)_1px,transparent_1px)] [background-size:24px_24px] opacity-70"
         />
 
         <div className="relative mx-auto grid w-full max-w-6xl items-center gap-12 px-5 sm:px-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14">
           <div className="hero-enter flex flex-col items-start gap-6">
+            {/* Live Status Badge */}
+            <div className="inline-flex items-center gap-2 rounded-full border border-paper/15 bg-paper/[0.05] px-3.5 py-1 text-xs backdrop-blur-sm transition-all hover:border-primary/40 hover:bg-paper/[0.08]">
+              <span className="relative flex size-2">
+                <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-75" />
+                <span className="relative inline-flex size-2 rounded-full bg-primary" />
+              </span>
+              <span className="font-mono text-[11px] tracking-wide text-paper/90">
+                ACTIVE RADAR SCANNING ONLINE
+              </span>
+            </div>
+
             <h1 className="font-display text-[clamp(40px,7.5vw,78px)] font-bold leading-[0.93] tracking-[-0.04em] text-balance">
-              Verify suspicious <span className="text-primary underline decoration-primary/40 underline-offset-8">text messages</span> instantly.
+              Verify suspicious <span className="relative inline-block text-primary underline decoration-primary/40 underline-offset-8 transition-transform duration-300 hover:scale-[1.02]">text messages</span> instantly.
             </h1>
 
-            <p className="max-w-xl text-base leading-relaxed text-paper/70 text-pretty">
+            <p className="max-w-xl text-base leading-relaxed text-paper/70 text-pretty sm:text-lg">
               Paste a banking alert, delivery notice, or unfamiliar text. The classifier returns an objective verdict and confidence score in under 20 milliseconds.
             </p>
 
-            <div className="flex flex-wrap gap-2.5 text-xs">
-              <span className="rounded-lg border border-paper/15 bg-paper/[0.04] px-3 py-1.5 text-paper/80">
+            <div className="flex flex-wrap items-center gap-3">
+              <a
+                href="#scan"
+                className="group inline-flex min-h-12 items-center gap-2 rounded-lg border-2 border-primary bg-primary px-6 text-sm font-bold text-ink shadow-[4px_4px_0_0_#ffffff] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[6px_6px_0_0_#ffffff] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[0_0_0_0_#ffffff]"
+              >
+                <span>Try Analyzer</span>
+                <ArrowUpRight className="size-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </a>
+
+              <button
+                type="button"
+                onClick={() => loadSample(PRESET_EXAMPLES[0].text)}
+                className="inline-flex min-h-12 items-center gap-2 rounded-lg border border-paper/20 bg-paper/[0.05] px-5 text-sm font-semibold text-paper/90 backdrop-blur-sm transition-all hover:border-paper/40 hover:bg-paper/[0.1] active:translate-y-px"
+              >
+                <SparklesIcon className="size-4 text-primary" />
+                <span>Load Sample Scam</span>
+              </button>
+            </div>
+
+            <div className="flex flex-wrap gap-2.5 pt-2 text-xs">
+              <span className="rounded-lg border border-paper/15 bg-paper/[0.04] px-3 py-1.5 text-paper/80 transition-colors hover:border-paper/30">
                 <span className="text-primary font-semibold mr-1.5">Capacity:</span> 5,000 characters
               </span>
-              <span className="rounded-lg border border-paper/15 bg-paper/[0.04] px-3 py-1.5 text-paper/80">
+              <span className="rounded-lg border border-paper/15 bg-paper/[0.04] px-3 py-1.5 text-paper/80 transition-colors hover:border-paper/30">
                 <span className="text-primary font-semibold mr-1.5">Model:</span> Scikit-Learn pipeline
               </span>
-              <span className="rounded-lg border border-paper/15 bg-paper/[0.04] px-3 py-1.5 text-paper/80">
+              <span className="rounded-lg border border-paper/15 bg-paper/[0.04] px-3 py-1.5 text-paper/80 transition-colors hover:border-paper/30">
                 <span className="text-primary font-semibold mr-1.5">Privacy:</span> In-memory, zero logs
               </span>
             </div>
@@ -250,7 +291,7 @@ export default function Home() {
 
           {/* Tactical Radar */}
           <div
-            className="hero-enter hidden w-full lg:block"
+            className="hero-enter hidden w-full lg:block motion-safe:animate-[float-slow_8s_ease-in-out_infinite]"
             style={{ animationDelay: "150ms" }}
           >
             <TacticalRadar onSelectMessage={loadSample} />
@@ -307,11 +348,16 @@ export default function Home() {
                   type="button"
                   onClick={reset}
                   disabled={loading || (!text && !result && !error)}
-                  className="absolute right-2.5 top-2.5 z-10 grid size-8 place-items-center rounded-md border border-ink/20 bg-paper/90 text-muted-foreground shadow-[1px_1px_0_0_#121410] transition hover:border-danger hover:bg-danger-bg hover:text-danger active:translate-x-0.5 active:translate-y-0.5 disabled:pointer-events-none disabled:opacity-0"
+                  className={`group absolute right-2.5 top-2.5 z-10 flex items-center gap-1.5 rounded-md border border-ink/20 bg-paper/95 px-2 py-1 text-[11px] font-semibold text-muted-foreground shadow-[2px_2px_0_0_#121410] transition-all duration-200 hover:border-danger hover:bg-danger-bg hover:text-danger active:translate-x-0.5 active:translate-y-0.5 active:shadow-[0_0_0_0_#121410] ${
+                    text.length > 0
+                      ? "opacity-100 scale-100"
+                      : "pointer-events-none opacity-0 scale-95"
+                  }`}
                   title="Clear message"
                   aria-label="Clear message"
                 >
-                  <TrashIcon className="size-4" />
+                  <TrashIcon className="size-3.5 transition-transform duration-200 group-hover:rotate-12" />
+                  <span className="hidden sm:inline">Clear</span>
                 </button>
 
                 <textarea

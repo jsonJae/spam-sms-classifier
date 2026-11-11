@@ -33,6 +33,28 @@
   --animate-meter-fill: meter-fill 0.65s var(--ease-out) both;
   --animate-hero-enter: hero-enter 0.7s var(--ease-out) both;
   --animate-fade-up: fade-up 0.5s var(--ease-out) both;
+  --animate-float-slow: float-slow 7s ease-in-out infinite;
+  --animate-pulse-glow: pulse-glow 4s ease-in-out infinite;
+}
+
+@keyframes float-slow {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(-8px) scale(1.02);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.15;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.28;
+    transform: scale(1.1);
+  }
 }
 
 @keyframes result-in {
