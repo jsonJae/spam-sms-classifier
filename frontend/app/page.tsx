@@ -4,8 +4,6 @@ import { useCallback, useEffect, useState, type FormEvent, type KeyboardEvent } 
 
 import {
   ArrowUpRight,
-  CheckIcon,
-  ClipboardIcon,
   ClockIcon,
   GiftIcon,
   LinkIcon,
@@ -77,9 +75,6 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
   const [entered, setEntered] = useState(false);
-  const [pastedNotification, setPastedNotification] = useState(false);
-
-  const [pasteError, setPasteError] = useState<string | null>(null);
 
   const charCount = text.length;
   const canSubmit = text.trim().length > 0 && !loading;
@@ -117,48 +112,12 @@ export default function Home() {
     setAnalyzedText("");
     setResult(null);
     setError(null);
-    setPasteError(null);
   }
 
   function handleTextChange(newVal: string) {
     setText(newVal);
     if (result) setResult(null);
     if (error) setError(null);
-    if (pasteError) setPasteError(null);
-  }
-
-  async function handlePaste() {
-    setPasteError(null);
-    try {
-      if (typeof navigator !== "undefined" && navigator.clipboard?.readText) {
-        const clipText = await navigator.clipboard.readText();
-        if (clipText && clipText.trim().length > 0) {
-          handleTextChange(clipText.slice(0, 5000));
-          setPastedNotification(true);
-          setTimeout(() => setPastedNotification(false), 2000);
-          return;
-        } else if (clipText === "") {
-          setPasteError("Clipboard is empty");
-          setTimeout(() => setPasteError(null), 3000);
-          return;
-        }
-      }
-      throw new Error("Clipboard API unavailable");
-    } catch {
-      // Fallback for browsers/contexts where navigator.clipboard is blocked or permission denied
-      const textarea = document.getElementById("message") as HTMLTextAreaElement | null;
-      if (textarea) {
-        textarea.focus();
-        const success = document.execCommand("paste");
-        if (success) {
-          setPastedNotification(true);
-          setTimeout(() => setPastedNotification(false), 2000);
-          return;
-        }
-      }
-      setPasteError("Clipboard access blocked. Use Ctrl+V or Cmd+V to paste.");
-      setTimeout(() => setPasteError(null), 4000);
-    }
   }
 
   function handleKeyDown(e: KeyboardEvent<HTMLTextAreaElement>) {
@@ -310,57 +269,29 @@ export default function Home() {
             onSubmit={handleSubmit}
             className="rounded-xl border-2 border-ink bg-card p-6 shadow-[8px_8px_0_0_#121410] sm:p-8"
           >
-            <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-ink/10 pb-4">
+            <div className="mb-5 flex items-center justify-between gap-4 border-b border-ink/10 pb-4">
               <h2 className="font-display text-2xl font-bold tracking-tight text-ink">
                 Inspect a message
               </h2>
 
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={handlePaste}
-                  disabled={loading}
-                  className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-lg border-2 border-ink bg-paper px-3 text-xs font-bold text-ink shadow-[2px_2px_0_0_#121410] transition hover:bg-primary hover:text-ink active:translate-x-0.5 active:translate-y-0.5 active:shadow-[0_0_0_0_#121410] disabled:cursor-not-allowed disabled:opacity-40"
-                  title="Paste text from clipboard"
-                >
-                  {pastedNotification ? (
-                    <CheckIcon className="size-3.5 text-accent" />
-                  ) : (
-                    <ClipboardIcon className="size-3.5" />
-                  )}
-                  <span>{pastedNotification ? "Pasted" : "Paste"}</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={reset}
-                  disabled={loading || (!text && !result && !error)}
-                  className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-lg border-2 border-ink bg-paper px-3 text-xs font-bold text-ink shadow-[2px_2px_0_0_#121410] transition hover:bg-danger-bg hover:text-danger hover:border-danger active:translate-x-0.5 active:translate-y-0.5 active:shadow-[0_0_0_0_#121410] disabled:cursor-not-allowed disabled:opacity-40"
-                  title="Clear input and verdict"
-                >
-                  <TrashIcon className="size-3.5" />
-                  <span>Clear</span>
-                </button>
-
-                <button
-                  type="submit"
-                  disabled={!canSubmit}
-                  aria-busy={loading}
-                  className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border-2 border-ink bg-primary px-4 text-xs font-bold text-ink shadow-[2px_2px_0_0_#121410] transition hover:bg-primary-hover hover:shadow-[3px_3px_0_0_#121410] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[0_0_0_0_#121410] disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {loading ? (
-                    <>
-                      <RefreshCwIcon className="size-3.5 animate-spin text-ink" />
-                      <span>Analyzing...</span>
-                    </>
-                  ) : (
-                    <>
-                      <RadarIcon className="size-3.5" />
-                      <span>Check message</span>
-                    </>
-                  )}
-                </button>
-              </div>
+              <button
+                type="submit"
+                disabled={!canSubmit}
+                aria-busy={loading}
+                className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border-2 border-ink bg-primary px-4 text-xs font-bold text-ink shadow-[2px_2px_0_0_#121410] transition hover:bg-primary-hover hover:shadow-[3px_3px_0_0_#121410] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[0_0_0_0_#121410] disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {loading ? (
+                  <>
+                    <RefreshCwIcon className="size-3.5 animate-spin text-ink" />
+                    <span>Analyzing...</span>
+                  </>
+                ) : (
+                  <>
+                    <RadarIcon className="size-3.5" />
+                    <span>Check message</span>
+                  </>
+                )}
+              </button>
             </div>
 
             <div className="flex flex-col gap-2.5">
@@ -371,10 +302,21 @@ export default function Home() {
                 Message text
               </label>
 
-              <div className="overflow-hidden rounded-lg border-2 border-ink/25 bg-paper/50 transition hover:border-ink/50 focus-within:border-primary focus-within:bg-paper">
+              <div className="relative overflow-hidden rounded-lg border-2 border-ink/25 bg-paper/50 transition hover:border-ink/50 focus-within:border-primary focus-within:bg-paper">
+                <button
+                  type="button"
+                  onClick={reset}
+                  disabled={loading || (!text && !result && !error)}
+                  className="absolute right-2.5 top-2.5 z-10 grid size-8 place-items-center rounded-md border border-ink/20 bg-paper/90 text-muted-foreground shadow-[1px_1px_0_0_#121410] transition hover:border-danger hover:bg-danger-bg hover:text-danger active:translate-x-0.5 active:translate-y-0.5 disabled:pointer-events-none disabled:opacity-0"
+                  title="Clear message"
+                  aria-label="Clear message"
+                >
+                  <TrashIcon className="size-4" />
+                </button>
+
                 <textarea
                   id="message"
-                  className="block min-h-[160px] w-full resize-none bg-transparent px-4 py-3.5 text-[15px] leading-relaxed text-ink placeholder:text-ink/35 focus:outline-none"
+                  className="block min-h-[160px] w-full resize-none bg-transparent px-4 py-3.5 pr-12 text-[15px] leading-relaxed text-ink placeholder:text-ink/35 focus:outline-none"
                   value={text}
                   onChange={(event) => handleTextChange(event.target.value)}
                   onKeyDown={handleKeyDown}
@@ -395,12 +337,6 @@ export default function Home() {
                   </span>
                 </div>
               </div>
-
-              {pasteError && (
-                <p className="text-xs font-semibold text-danger" role="alert">
-                  {pasteError}
-                </p>
-              )}
 
               <div className="flex items-center justify-between text-xs text-muted-foreground">
                 <span className="flex items-center gap-1.5">
