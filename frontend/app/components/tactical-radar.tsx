@@ -55,7 +55,7 @@ export function TacticalRadar({
   onSelectMessage,
 }: {
   onSelectMessage?: (text: string) => void;
-}) {
+} = {}) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [activeBlip, setActiveBlip] = useState<RadarBlip | null>(DEFAULT_BLIPS[0]);
   const [isHovering, setIsHovering] = useState(false);
@@ -268,10 +268,7 @@ export function TacticalRadar({
       {/* Top Header */}
       <div className="flex items-center justify-between border-b border-paper/10 bg-paper/[0.02] px-4 py-3 text-xs text-paper/70">
         <div className="flex items-center gap-2">
-          <span className="relative flex size-2">
-            <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-75" />
-            <span className="relative inline-flex size-2 rounded-full bg-primary" />
-          </span>
+          <span className="size-2 rounded-full bg-primary" />
           <span className="font-semibold text-paper">Tactical Radar Interceptor</span>
         </div>
         <span className="text-[11px] text-paper/40">360° frequency scan</span>
@@ -299,40 +296,36 @@ export function TacticalRadar({
 
       {/* Active Blip Detail Card */}
       {activeBlip && (
-        <div className="border-t border-paper/10 bg-paper/[0.03] p-4 transition-colors">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <div className="flex items-center gap-2">
-                <span
-                  className={`size-2 rounded-full ${
-                    activeBlip.isSpam ? "bg-primary" : "bg-success"
-                  }`}
-                />
-                <h4 className="font-semibold text-sm text-paper">{activeBlip.label}</h4>
-                <span
-                  className={`rounded px-1.5 py-0.2 text-[10px] font-medium ${
-                    activeBlip.isSpam
-                      ? "bg-primary/20 text-primary border border-primary/30"
-                      : "bg-success/20 text-[#6fd39b] border border-success/30"
-                  }`}
-                >
-                  {activeBlip.isSpam ? "Spam detected" : "Clean"} · {activeBlip.confidence}%
-                </span>
+        <div className="border-t border-paper/10 bg-paper/[0.03] p-4 sm:p-5">
+          <div className="flex flex-col gap-3">
+            {/* Header: Indicator, Target Label, Probability Badge */}
+            <div className="flex items-center gap-2.5">
+              <span
+                className={`size-2 rounded-full ${
+                  activeBlip.isSpam ? "bg-primary" : "bg-success"
+                }`}
+              />
+              <h4 className="font-semibold text-sm text-paper tracking-tight">{activeBlip.label}</h4>
+              <span
+                className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold tracking-wide ${
+                  activeBlip.isSpam
+                    ? "bg-primary/20 text-primary border border-primary/40"
+                    : "bg-success/20 text-[#6fd39b] border border-success/40"
+                }`}
+              >
+                {activeBlip.isSpam ? "Spam detected" : "Clean"} · {activeBlip.confidence}%
+              </span>
+            </div>
+
+            {/* Message Quote Box */}
+            <div className="rounded-xl border border-paper/10 bg-black/55 p-3.5 shadow-inner">
+              <div className="mb-1.5 text-[11px] font-medium text-paper/40">
+                Interception transcript
               </div>
-              <p className="mt-1.5 line-clamp-2 text-xs text-paper/75 leading-relaxed">
+              <p className="text-xs sm:text-[13px] leading-relaxed text-paper/90 italic">
                 &ldquo;{activeBlip.text}&rdquo;
               </p>
             </div>
-
-            {onSelectMessage && (
-              <button
-                type="button"
-                onClick={() => onSelectMessage(activeBlip.text)}
-                className="shrink-0 rounded-lg border border-primary/40 bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary transition hover:bg-primary hover:text-ink active:scale-95"
-              >
-                Test in scanner
-              </button>
-            )}
           </div>
         </div>
       )}
