@@ -1,0 +1,22 @@
+{
+  "name": "spam-sms-classifier",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "prepare": "husky",
+    "lint": "npm run lint:frontend && npm run lint:backend",
+    "lint:frontend": "npm --prefix frontend run lint",
+    "lint:backend": "python -m flake8 backend",
+    "typecheck:frontend": "npm --prefix frontend run typecheck",
+    "build:frontend": "npm --prefix frontend run build",
+    "check:commit-msg": "node scripts/check-commit-msg.js"
+  },
+  "lint-staged": {
+    "frontend/**/*.{js,jsx,ts,tsx}": "node frontend/node_modules/eslint/bin/eslint.js --config frontend/eslint.config.mjs --fix",
+    "backend/**/*.py": "python -m flake8"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^17.6.0"
+  }
+}

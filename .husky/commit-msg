@@ -1,0 +1,2 @@
+node scripts/check-commit-msg.js "$1"
+
