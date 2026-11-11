@@ -6,7 +6,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
-MODEL_PATH = Path(__file__).resolve().parent.parent / "message_classifier.joblib"
+MODEL_PATH = Path(__file__).resolve().parent / "message_classifier.joblib"
 
 DEFAULT_ORIGINS = "http://localhost:3000,http://127.0.0.1:3000"
 ALLOWED_ORIGINS = [
