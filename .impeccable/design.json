@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-10T23:12:35.000Z",
+  "title": "Design System: SMS Guardian",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Signal Vermilion",
+        "canonical": "#ff5c1a",
+        "tonalRamp": ["#3d1100", "#732502", "#aa3707", "#e84a10", "#ff5c1a", "#ff8552", "#ffb494", "#ffe4d9"]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Terminal Ink",
+        "canonical": "#121410",
+        "tonalRamp": ["#080a08", "#121410", "#21241f", "#333730", "#4d5249", "#787e73", "#b2b8ad", "#f3efe4"]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Warm Editorial Parchment",
+        "canonical": "#f3efe4",
+        "tonalRamp": ["#383428", "#635c49", "#948a6f", "#c4b999", "#d9d2c1", "#e8e2d4", "#f3efe4", "#fffdf6"]
+      },
+      "accent": {
+        "role": "tertiary",
+        "displayName": "Telemetry Emerald",
+        "canonical": "#168a52",
+        "tonalRamp": ["#052414", "#0a4729", "#0f6c3e", "#127a49", "#168a52", "#35b074", "#77d3a4", "#e7f4ec"]
+      },
+      "danger": {
+        "role": "error",
+        "displayName": "Danger Crimson",
+        "canonical": "#cf2f1f",
+        "tonalRamp": ["#360804", "#6b1109", "#9e1f13", "#cf2f1f", "#e65747", "#f38e82", "#f9c5bf", "#fbe9e4"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display Headline", "purpose": "Hero statements and prominent section markers." },
+      "headline": { "displayName": "Section Headline", "purpose": "Category headers and major panel titles." },
+      "title": { "displayName": "Component Title", "purpose": "Card headings and modal titles." },
+      "body": { "displayName": "Body Copy", "purpose": "Reading paragraphs, instructions, and descriptions." },
+      "label": { "displayName": "Telemetry Label", "purpose": "Uppercase monospace status chips and API endpoints." }
+    },
+    "shadows": [
+      { "name": "tactile-hard-lg", "value": "8px 8px 0 0 #121410", "purpose": "Elevation for primary interactive consoles and form panels." },
+      { "name": "tactile-hard-md", "value": "5px 5px 0 0 #121410", "purpose": "Elevation for feature signal cards." },
+      { "name": "tactile-hard-btn", "value": "4px 4px 0 0 #121410", "purpose": "Elevation for interactive action buttons." },
+      { "name": "console-glow", "value": "0 40px 90px -45px rgba(0,0,0,0.9)", "purpose": "Deep ambient blur beneath the dark radar console." }
+    ],
+    "motion": [
+      { "name": "ease-out", "value": "cubic-bezier(0.23, 1, 0.32, 1)", "purpose": "Decelerated snap for verdicts and interactive items." },
+      { "name": "ease-in-out", "value": "cubic-bezier(0.77, 0, 0.175, 1)", "purpose": "Smooth acceleration curve for background sweeps." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Action Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Bold tactile action trigger with hard offset shadow.",
+      "html": "<button class=\"ds-btn-primary\">CHECK MESSAGE</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 12px 24px; background-color: #ff5c1a; color: #121410; font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; border: 2px solid #121410; border-radius: 8px; box-shadow: 4px 4px 0 0 #121410; cursor: pointer; transition: all 0.15s ease; } .ds-btn-primary:hover { background-color: #e84a10; box-shadow: 6px 6px 0 0 #121410; } .ds-btn-primary:active { transform: translate(2px, 2px); box-shadow: 0 0 0 0 #121410; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Neutral secondary button on chalk surface.",
+      "html": "<button class=\"ds-btn-secondary\">CLEAR INPUT</button>",
+      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 12px 24px; background-color: #fffdf6; color: #121410; font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; border: 2px solid rgba(18,20,16,0.25); border-radius: 8px; cursor: pointer; transition: all 0.15s ease; } .ds-btn-secondary:hover { border-color: #121410; background-color: #f3efe4; }"
+    },
+    {
+      "name": "Status Chip",
+      "kind": "chip",
+      "refersTo": "status-chip",
+      "description": "Uppercase monospace telemetry indicator.",
+      "html": "<span class=\"ds-chip-telemetry\"><span class=\"ds-dot\"></span>API ONLINE</span>",
+      "css": ".ds-chip-telemetry { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; background-color: #fffdf6; border: 2px solid rgba(18,20,16,0.15); border-radius: 9999px; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.16em; color: #5f5d52; } .ds-dot { width: 6px; height: 6px; border-radius: 9999px; background-color: #168a52; }"
+    },
+    {
+      "name": "Verdict Badge",
+      "kind": "chip",
+      "refersTo": "verdict-badge",
+      "description": "High-contrast security verdict badge.",
+      "html": "<span class=\"ds-verdict-spam\">LIKELY SPAM · 98%</span>",
+      "css": ".ds-verdict-spam { display: inline-flex; align-items: center; padding: 4px 10px; background-color: #fbe9e4; border: 1.5px solid #cf2f1f; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: #cf2f1f; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Tactical Signal Desk",
+    "overview": "SMS Guardian combines the tactile confidence of an industrial dispatch terminal with the warm, authoritative legibility of editorial broadsheets. The aesthetic rejects generic sterile corporate SaaS and dark-mode cyberpunk clichés. Instead, it positions message verification as a deliberate, reliable diagnostic tool — physical, grounded, and alert.\n\nThe interface lives in a daylight state on warm, unbleached parchment (#f3efe4), anchored by solid 2px ink borders and hard, un-blurred block drop shadows. Against this tactile paper background, high-contrast obsidian console panels (#080a08) host live scanning telemetry, laser sweeps, and luminous signal lights. The resulting atmosphere feels like operating an analog radar console in an intelligence reading room.",
+    "keyCharacteristics": [
+      "Tactile Neo-Brutalism with Restraint: Thick 2px structural ink strokes paired with crisp hard offset drop shadows (4px to 8px), softened by organic corner radiuses (8px to 16px).",
+      "Paper & Phosphor Contrast: Warm daytime editorial paper for reading and inputs, juxtaposed against deep void black for machine telemetry and dark-room radar sweeps.",
+      "Micro-Telemetry Typographic Hierarchy: Compressed, personality-rich variable display type juxtaposed with ultra-legible utilitarian body copy and disciplined monospace telemetry stamps."
+    ],
+    "rules": [
+      {
+        "name": "The High-Alert Restraint Rule",
+        "body": "Signal Vermilion (#ff5c1a) must never be used as a general background or decorative flood. It is reserved strictly for singular calls-to-action, scan sweeps, and alert badges. When everything shouts, nothing warns.",
+        "section": "colors"
+      },
+      {
+        "name": "The Paper-and-Phosphor Rule",
+        "body": "High-level content, explanation, and form input remain in the warm paper realm (#f3efe4). Real-time automated data streams (the live demo feed, splash boot loader) exist in dark phosphor chambers (#080a08 / #121410).",
+        "section": "colors"
+      },
+      {
+        "name": "The Telemetry Stamp Rule",
+        "body": "All timestamps, endpoints, status states, character counts, and index markers must be formatted in uppercase JetBrains Mono with wide tracking (0.14em–0.2em).",
+        "section": "typography"
+      },
+      {
+        "name": "The Zero-Fuzz Elevation Rule",
+        "body": "No Gaussian blurred shadows may be used on light card surfaces. Elevation on paper is strictly communicated through solid 2px #121410 outlines and discrete coordinate translations (translate(x, y)).",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do preserve 2px solid ink strokes around primary modules and cards.",
+      "Do use uppercase monospace (JetBrains Mono) with wide tracking for telemetry and status labels.",
+      "Do provide instant visual feedback on interactive button presses using coordinate translation and shadow collapse.",
+      "Do respect user preferences for reduced motion by immediately showing resolved UI states."
+    ],
+    "donts": [
+      "Don't use soft, fuzzy CSS box-shadows on daylight parchment cards.",
+      "Don't flood large background areas with primary orange (#ff5c1a).",
+      "Don't use decorative generic stock photography or illustrative cartoons; maintain the authentic signal intelligence instrument aesthetic.",
+      "Don't omit confidence percentages or replace probabilistic machine verdicts with false claims of absolute certainty."
+    ]
+  }
+}
+
