@@ -3,18 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { OverdriveShield } from "./icons";
 
-const BOOT_SEQUENCE = [
-  { step: "1", label: "Calibrating TF-IDF vector matrix", latency: "14ms" },
-  { step: "2", label: "Connecting to classification engine", latency: "8ms" },
-  { step: "3", label: "Loading heuristic pattern library", latency: "22ms" },
-  { step: "4", label: "System ready", latency: "0ms" },
-];
-
 export function Splash({ onDone }: { onDone: () => void }) {
-  const [activeStep, setActiveStep] = useState(0);
-  const [progress, setProgress] = useState(12);
   const [isExiting, setIsExiting] = useState(false);
-  const highWaterRef = useRef(12);
   const onDoneRef = useRef(onDone);
 
   useEffect(() => {
@@ -35,163 +25,87 @@ export function Splash({ onDone }: { onDone: () => void }) {
     };
     window.addEventListener("keydown", handleKeyDown);
 
-    const stepTimers: NodeJS.Timeout[] = [];
+    const exitTimer = setTimeout(() => {
+      setIsExiting(true);
+    }, 1500);
 
-    const safeSetProgress = (value: number) => {
-      if (value > highWaterRef.current) {
-        highWaterRef.current = value;
-        setProgress(value);
-      }
-    };
-
-    const safeSetStep = (step: number) => {
-      setActiveStep((prev) => Math.max(prev, step));
-    };
-
-    stepTimers.push(
-      setTimeout(() => {
-        safeSetStep(1);
-        safeSetProgress(42);
-      }, 500)
-    );
-
-    stepTimers.push(
-      setTimeout(() => {
-        safeSetStep(2);
-        safeSetProgress(74);
-      }, 1100)
-    );
-
-    stepTimers.push(
-      setTimeout(() => {
-        safeSetStep(3);
-        safeSetProgress(100);
-      }, 1700)
-    );
-
-    stepTimers.push(
-      setTimeout(() => {
-        setIsExiting(true);
-      }, 2300)
-    );
-
-    stepTimers.push(
-      setTimeout(() => {
-        onDoneRef.current();
-      }, 2750)
-    );
+    const doneTimer = setTimeout(() => {
+      onDoneRef.current();
+    }, 2050);
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
-      stepTimers.forEach(clearTimeout);
+      clearTimeout(exitTimer);
+      clearTimeout(doneTimer);
     };
   }, []);
 
   return (
     <div
       data-splash
-      className={`fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden bg-[#080a08] px-6 text-paper transition-all duration-500 ease-out ${
-        isExiting ? "pointer-events-none -translate-y-full opacity-0" : "translate-y-0 opacity-100"
+      className={`fixed inset-0 z-[100] flex items-center justify-center overflow-hidden bg-[#080a08] text-paper transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] ${
+        isExiting
+          ? "pointer-events-none scale-125 opacity-0 blur-sm"
+          : "scale-100 opacity-100 blur-none"
       }`}
       role="status"
-      aria-label="Initializing SMS Guardian"
+      aria-label="Loading"
     >
+      {/* Dynamic atmospheric energy glows */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute left-1/2 top-1/2 size-[520px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/10 blur-[130px]"
+        className="pointer-events-none absolute size-[560px] rounded-full bg-primary/20 blur-[140px] motion-safe:animate-[pulse-glow_3s_ease-in-out_infinite]"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute size-[380px] rounded-full bg-accent/15 blur-[120px] motion-safe:animate-[pulse-glow_4s_ease-in-out_infinite_1s]"
       />
 
-      <div className="relative flex w-full max-w-[420px] flex-col items-center gap-7 text-center">
-        <div className="relative grid place-items-center">
-          <div
-            aria-hidden="true"
-            className="absolute size-28 rounded-full border border-primary/25 radar-ring"
-          />
-          <div
-            aria-hidden="true"
-            className="absolute size-36 rounded-full border border-primary/15"
-            style={{ animation: "radar-pulse 2.2s cubic-bezier(0.2, 0.8, 0.2, 1) 0.6s infinite" }}
-          />
+      {/* Cybernetic grid field */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(243,239,228,0.06)_1px,transparent_1px)] [background-size:24px_24px] opacity-75"
+      />
 
-          <span className="relative grid size-16 place-items-center rounded-2xl border-2 border-primary/40 bg-ink text-primary shadow-[0_0_30px_rgba(255,92,26,0.35)] transition-transform duration-300 hover:scale-105">
-            <OverdriveShield className="size-10" animated />
-          </span>
+      {/* Pure Overdriven Centerpiece Animation */}
+      <div className="relative flex items-center justify-center">
+        {/* Outermost expanding pulse waves */}
+        <div
+          aria-hidden="true"
+          className="absolute size-72 rounded-full border border-primary/20 motion-safe:animate-[radar-pulse_2.4s_cubic-bezier(0.2,0.8,0.2,1)_infinite]"
+        />
+        <div
+          aria-hidden="true"
+          className="absolute size-88 rounded-full border border-primary/10 motion-safe:animate-[radar-pulse_2.4s_cubic-bezier(0.2,0.8,0.2,1)_0.7s_infinite]"
+        />
+
+        {/* Counter-rotating reticle rings with precision tick notches */}
+        <div
+          aria-hidden="true"
+          className="absolute size-56 rounded-full border-2 border-dashed border-primary/30 motion-safe:animate-spin-slow"
+        />
+        <div
+          aria-hidden="true"
+          className="absolute size-44 rounded-full border border-paper/20 border-t-primary border-b-primary motion-safe:animate-spin-reverse"
+        />
+        <div
+          aria-hidden="true"
+          className="absolute size-36 rounded-full border border-primary/40 motion-safe:animate-[pulse-glow_2s_ease-in-out_infinite]"
+        />
+
+        {/* Center Illuminated Tactical Shield */}
+        <div className="relative z-10 grid size-24 place-items-center rounded-2xl border-2 border-primary bg-[#121410] shadow-[0_0_50px_rgba(255,92,26,0.5),inset_0_0_20px_rgba(255,92,26,0.2)] motion-safe:animate-shield-flare">
+          <OverdriveShield className="size-14 text-primary" animated />
         </div>
 
-        <div className="flex flex-col items-center gap-1.5">
-          <h1 className="font-display text-3xl font-bold tracking-tight text-paper sm:text-4xl">
-            SMS Guardian
-          </h1>
-          <div className="flex items-center gap-2 text-xs text-paper/60">
-            <span className="relative flex size-2">
-              <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-75" />
-              <span className="relative inline-flex size-2 rounded-full bg-primary" />
-            </span>
-            <span>Spam classification tool</span>
-          </div>
-        </div>
-
-        <div className="w-full rounded-xl border border-paper/15 bg-paper/[0.03] p-4 text-left text-xs backdrop-blur-sm">
-          <div className="flex flex-col gap-2.5">
-            {BOOT_SEQUENCE.map((item, index) => {
-              const isDone = index <= activeStep;
-              const isCurrent = index === activeStep;
-
-              return (
-                <div
-                  key={item.step}
-                  className={`flex items-center justify-between gap-3 transition-opacity duration-300 ${
-                    isDone ? "opacity-100" : "opacity-30"
-                  }`}
-                >
-                  <div className="flex items-center gap-2 truncate">
-                    <span className="text-primary font-semibold">{item.step}.</span>
-                    <span className="truncate text-paper/85">{item.label}</span>
-                  </div>
-                  <span
-                    className={`shrink-0 rounded px-1.5 py-0.5 text-[11px] font-medium ${
-                      isDone
-                        ? isCurrent
-                          ? "bg-primary/20 text-primary border border-primary/30"
-                          : "bg-success/20 text-[#6fd39b] border border-success/30"
-                        : "text-paper/30"
-                    }`}
-                  >
-                    {isDone ? (isCurrent && index < 3 ? "Checking" : "Ready") : "Pending"}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="mt-4 pt-3 border-t border-paper/10">
-            <div className="flex items-center justify-between text-xs text-paper/50 mb-1.5">
-              <span>Loading</span>
-              <span className="text-primary font-medium">{progress}%</span>
-            </div>
-            <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-paper/15">
-              <div
-                className="h-full rounded-full bg-primary relative"
-                style={{
-                  width: `${progress}%`,
-                  transition: "width 500ms cubic-bezier(0.16, 1, 0.3, 1)",
-                }}
-              >
-                <div className="absolute right-0 top-0 bottom-0 w-2 bg-white rounded-full shadow-[0_0_10px_#fff]" />
-              </div>
-            </div>
-          </div>
+        {/* Dynamic sweeping beam needle */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute size-56 origin-center motion-safe:animate-radar-sweep-spin"
+        >
+          <div className="h-1/2 w-0.5 bg-gradient-to-t from-transparent via-primary/60 to-primary shadow-[0_0_12px_#ff5c1a] mx-auto" />
         </div>
       </div>
-
-      <button
-        type="button"
-        onClick={onDone}
-        className="absolute bottom-6 right-6 inline-flex items-center gap-2 rounded-lg border border-paper/20 bg-paper/[0.04] px-4 py-2 text-xs text-paper/70 backdrop-blur transition hover:border-primary hover:bg-primary/10 hover:text-primary active:scale-95"
-      >
-        <span>Skip intro</span>
-        <kbd className="rounded border border-paper/25 px-1 py-0.5 text-[10px] text-paper/40">Esc</kbd>
-      </button>
     </div>
   );
 }

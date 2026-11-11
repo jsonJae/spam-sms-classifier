@@ -35,6 +35,39 @@
   --animate-fade-up: fade-up 0.5s var(--ease-out) both;
   --animate-float-slow: float-slow 7s ease-in-out infinite;
   --animate-pulse-glow: pulse-glow 4s ease-in-out infinite;
+  --animate-radar-sweep-spin: radar-sweep-spin 3s linear infinite;
+  --animate-spin-slow: spin 16s linear infinite;
+  --animate-spin-reverse: spin-reverse 12s linear infinite;
+  --animate-shield-flare: shield-flare 2.2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+@keyframes spin-reverse {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes shield-flare {
+  0%, 100% {
+    transform: scale(0.98);
+    filter: drop-shadow(0 0 15px rgba(255, 92, 26, 0.4));
+  }
+  50% {
+    transform: scale(1.06);
+    filter: drop-shadow(0 0 45px rgba(255, 92, 26, 0.85));
+  }
+}
+
+@keyframes radar-sweep-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes float-slow {
