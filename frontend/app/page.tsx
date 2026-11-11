@@ -17,7 +17,9 @@ import { ResultCard, type Prediction } from "./components/result-card";
 import { Splash } from "./components/splash";
 import { TacticalRadar } from "./components/tactical-radar";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const API_ENDPOINT = process.env.NEXT_PUBLIC_API_URL
+  ? `${process.env.NEXT_PUBLIC_API_URL}/predict`
+  : "/api/predict";
 
 const PRESET_EXAMPLES = [
   {
@@ -149,7 +151,7 @@ export default function Home() {
     setAnalyzedText(targetText);
 
     try {
-      const response = await fetch(`${API_URL}/predict`, {
+      const response = await fetch(API_ENDPOINT, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: targetText }),
