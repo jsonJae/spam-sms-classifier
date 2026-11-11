@@ -69,20 +69,10 @@ export function TacticalRadar({
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    let animationFrameId: number;
+    let animationFrameId = 0;
     let sweepAngle = 0;
+    let running = false;
     const blips = [...DEFAULT_BLIPS];
-
-    const resize = () => {
-      const rect = canvas.getBoundingClientRect();
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
-      ctx.scale(dpr, dpr);
-    };
-
-    resize();
-    window.addEventListener("resize", resize);
 
     const render = () => {
       const rect = canvas.getBoundingClientRect();
@@ -91,6 +81,8 @@ export function TacticalRadar({
       const centerX = width / 2;
       const centerY = height / 2;
       const radius = Math.min(centerX, centerY) - 16;
+
+      if (radius <= 0) return;
 
       ctx.clearRect(0, 0, width, height);
 
@@ -199,17 +191,43 @@ export function TacticalRadar({
         const labelOffset = blipX > centerX ? 10 : -10;
         ctx.fillText(blip.label, blipX + labelOffset, blipY + 3);
       });
+    };
 
-      if (!reducedMotion) {
-        animationFrameId = requestAnimationFrame(render);
+    const loop = () => {
+      render();
+      animationFrameId = requestAnimationFrame(loop);
+    };
+
+    const syncSize = () => {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.max(1, Math.round(rect.width * dpr));
+      canvas.height = Math.max(1, Math.round(rect.height * dpr));
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const visible = rect.width > 32 && rect.height > 32;
+
+      if (reducedMotion) {
+        if (visible) render();
+        return;
+      }
+
+      if (visible && !running) {
+        running = true;
+        animationFrameId = requestAnimationFrame(loop);
+      } else if (!visible && running) {
+        running = false;
+        cancelAnimationFrame(animationFrameId);
       }
     };
 
-    render();
+    const observer = new ResizeObserver(syncSize);
+    observer.observe(canvas);
+    syncSize();
 
     return () => {
-      window.removeEventListener("resize", resize);
-      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      observer.disconnect();
+      cancelAnimationFrame(animationFrameId);
     };
   }, [activeBlip]);
 
@@ -223,6 +241,8 @@ export function TacticalRadar({
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
     const radius = Math.min(centerX, centerY) - 16;
+
+    if (radius <= 0) return;
 
     // Find closest blip within click radius
     let closest: RadarBlip | null = null;

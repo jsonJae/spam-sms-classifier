@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState, type FormEvent, type KeyboardEvent } 
 
 import {
   ArrowUpRight,
+  CheckIcon,
   ClipboardIcon,
   ClockIcon,
   GiftIcon,
@@ -12,6 +13,7 @@ import {
   RadarIcon,
   RefreshCwIcon,
   SparklesIcon,
+  TrashIcon,
 } from "./components/icons";
 import { ResultCard, type Prediction } from "./components/result-card";
 import { Splash } from "./components/splash";
@@ -77,6 +79,8 @@ export default function Home() {
   const [entered, setEntered] = useState(false);
   const [pastedNotification, setPastedNotification] = useState(false);
 
+  const [pasteError, setPasteError] = useState<string | null>(null);
+
   const charCount = text.length;
   const canSubmit = text.trim().length > 0 && !loading;
 
@@ -113,24 +117,47 @@ export default function Home() {
     setAnalyzedText("");
     setResult(null);
     setError(null);
+    setPasteError(null);
   }
 
   function handleTextChange(newVal: string) {
     setText(newVal);
     if (result) setResult(null);
     if (error) setError(null);
+    if (pasteError) setPasteError(null);
   }
 
   async function handlePaste() {
+    setPasteError(null);
     try {
-      const clipText = await navigator.clipboard.readText();
-      if (clipText) {
-        handleTextChange(clipText.slice(0, 5000));
-        setPastedNotification(true);
-        setTimeout(() => setPastedNotification(false), 1800);
+      if (typeof navigator !== "undefined" && navigator.clipboard?.readText) {
+        const clipText = await navigator.clipboard.readText();
+        if (clipText && clipText.trim().length > 0) {
+          handleTextChange(clipText.slice(0, 5000));
+          setPastedNotification(true);
+          setTimeout(() => setPastedNotification(false), 2000);
+          return;
+        } else if (clipText === "") {
+          setPasteError("Clipboard is empty");
+          setTimeout(() => setPasteError(null), 3000);
+          return;
+        }
       }
+      throw new Error("Clipboard API unavailable");
     } catch {
-      // Clipboard access unavailable or blocked
+      // Fallback for browsers/contexts where navigator.clipboard is blocked or permission denied
+      const textarea = document.getElementById("message") as HTMLTextAreaElement | null;
+      if (textarea) {
+        textarea.focus();
+        const success = document.execCommand("paste");
+        if (success) {
+          setPastedNotification(true);
+          setTimeout(() => setPastedNotification(false), 2000);
+          return;
+        }
+      }
+      setPasteError("Clipboard access blocked. Use Ctrl+V or Cmd+V to paste.");
+      setTimeout(() => setPasteError(null), 4000);
     }
   }
 
@@ -287,46 +314,93 @@ export default function Home() {
               <h2 className="font-display text-2xl font-bold tracking-tight text-ink">
                 Inspect a message
               </h2>
-              <span className="rounded border border-ink/15 bg-paper/60 px-2.5 py-1 text-xs font-semibold text-muted-foreground">
-                POST /predict
-              </span>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handlePaste}
+                  disabled={loading}
+                  className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-lg border-2 border-ink bg-paper px-3 text-xs font-bold text-ink shadow-[2px_2px_0_0_#121410] transition hover:bg-primary hover:text-ink active:translate-x-0.5 active:translate-y-0.5 active:shadow-[0_0_0_0_#121410] disabled:cursor-not-allowed disabled:opacity-40"
+                  title="Paste text from clipboard"
+                >
+                  {pastedNotification ? (
+                    <CheckIcon className="size-3.5 text-accent" />
+                  ) : (
+                    <ClipboardIcon className="size-3.5" />
+                  )}
+                  <span>{pastedNotification ? "Pasted" : "Paste"}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={reset}
+                  disabled={loading || (!text && !result && !error)}
+                  className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-lg border-2 border-ink bg-paper px-3 text-xs font-bold text-ink shadow-[2px_2px_0_0_#121410] transition hover:bg-danger-bg hover:text-danger hover:border-danger active:translate-x-0.5 active:translate-y-0.5 active:shadow-[0_0_0_0_#121410] disabled:cursor-not-allowed disabled:opacity-40"
+                  title="Clear input and verdict"
+                >
+                  <TrashIcon className="size-3.5" />
+                  <span>Clear</span>
+                </button>
+
+                <button
+                  type="submit"
+                  disabled={!canSubmit}
+                  aria-busy={loading}
+                  className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border-2 border-ink bg-primary px-4 text-xs font-bold text-ink shadow-[2px_2px_0_0_#121410] transition hover:bg-primary-hover hover:shadow-[3px_3px_0_0_#121410] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[0_0_0_0_#121410] disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {loading ? (
+                    <>
+                      <RefreshCwIcon className="size-3.5 animate-spin text-ink" />
+                      <span>Analyzing...</span>
+                    </>
+                  ) : (
+                    <>
+                      <RadarIcon className="size-3.5" />
+                      <span>Check message</span>
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
 
             <div className="flex flex-col gap-2.5">
-              <div className="flex items-center justify-between gap-3">
-                <label
-                  htmlFor="message"
-                  className="text-xs font-semibold text-ink"
-                >
-                  Message text
-                </label>
-                <div className="flex items-center gap-3">
-                  {pastedNotification && (
-                    <span className="text-xs text-accent font-semibold animate-pulse">
-                      Pasted from clipboard
-                    </span>
-                  )}
+              <label
+                htmlFor="message"
+                className="text-xs font-semibold text-ink"
+              >
+                Message text
+              </label>
+
+              <div className="overflow-hidden rounded-lg border-2 border-ink/25 bg-paper/50 transition hover:border-ink/50 focus-within:border-primary focus-within:bg-paper">
+                <textarea
+                  id="message"
+                  className="block min-h-[160px] w-full resize-none bg-transparent px-4 py-3.5 text-[15px] leading-relaxed text-ink placeholder:text-ink/35 focus:outline-none"
+                  value={text}
+                  onChange={(event) => handleTextChange(event.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder="Paste the SMS or chat message you want to verify..."
+                  rows={5}
+                  maxLength={5000}
+                  required
+                />
+
+                <div className="flex items-center justify-end border-t border-ink/10 px-3 py-1.5">
                   <span
-                    className={`text-xs tabular-nums font-medium ${
+                    className={`font-mono text-[11px] font-medium tabular-nums tracking-[0.08em] ${
                       charCount > 4500 ? "text-danger font-bold" : "text-muted-foreground"
                     }`}
                   >
-                    {charCount.toLocaleString("en-US")} / 5,000
+                    {charCount.toLocaleString("en-US")}
+                    <span className="hidden min-[360px]:inline"> / 5,000</span>
                   </span>
                 </div>
               </div>
 
-              <textarea
-                id="message"
-                className="min-h-[160px] w-full resize-y rounded-lg border-2 border-ink/25 bg-paper/50 px-4 py-3.5 text-[15px] leading-relaxed text-ink transition placeholder:text-ink/35 hover:border-ink/50 focus:border-primary focus:bg-paper"
-                value={text}
-                onChange={(event) => handleTextChange(event.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Paste the SMS or chat message you want to verify..."
-                rows={5}
-                maxLength={5000}
-                required
-              />
+              {pasteError && (
+                <p className="text-xs font-semibold text-danger" role="alert">
+                  {pasteError}
+                </p>
+              )}
 
               <div className="flex items-center justify-between text-xs text-muted-foreground">
                 <span className="flex items-center gap-1.5">
@@ -357,48 +431,6 @@ export default function Home() {
                   </button>
                 ))}
               </div>
-            </div>
-
-            {/* Actions */}
-            <div className="mt-6 flex flex-wrap gap-3 max-sm:flex-col">
-              <button
-                type="submit"
-                disabled={!canSubmit}
-                aria-busy={loading}
-                className={`${buttonBase} border-ink bg-primary text-ink shadow-[4px_4px_0_0_#121410] hover:bg-primary-hover hover:shadow-[6px_6px_0_0_#121410] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[0_0_0_0_#121410]`}
-              >
-                {loading ? (
-                  <>
-                    <RefreshCwIcon className="size-4 animate-spin text-ink" />
-                    <span>Analyzing...</span>
-                  </>
-                ) : (
-                  <>
-                    <RadarIcon className="size-4" />
-                    <span>Check message</span>
-                  </>
-                )}
-              </button>
-
-              <button
-                type="button"
-                onClick={handlePaste}
-                disabled={loading}
-                className={`${buttonBase} border-ink/30 bg-card text-ink hover:border-ink hover:bg-paper active:scale-98`}
-                title="Paste text from clipboard"
-              >
-                <ClipboardIcon className="size-4" />
-                <span>Paste</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={reset}
-                disabled={loading || (!text && !result && !error)}
-                className={`${buttonBase} border-ink/20 bg-transparent text-muted-foreground hover:border-ink hover:text-ink`}
-              >
-                Clear
-              </button>
             </div>
           </form>
 
