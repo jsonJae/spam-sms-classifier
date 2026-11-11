@@ -1,0 +1,17 @@
+.git
+.github
+.gitignore
+.dockerignore
+node_modules
+frontend/node_modules
+frontend/.next
+frontend/out
+**/__pycache__
+**/*.pyc
+.venv
+venv
+.ipynb_checkpoints
+*.ipynb
+.env
+.env.*
+*.log
