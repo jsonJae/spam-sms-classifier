@@ -159,6 +159,35 @@ npm run build:frontend
 
 `npm run lint` runs ESLint on the frontend and flake8 on the backend. CI also loads the model and sends two sample messages to a running API instance. The container workflow publishes images to GHCR on pushes to `main` and on version tags.
 
+## Contributing
+
+Create a branch from `main`. Use a type prefix and a short kebab-case description:
+
+```
+feat/frontend-confidence-warning
+fix/backend-empty-text
+docs/update-api-examples
+refactor/split-prediction-route
+```
+
+The prefix should match the kind of change. Use `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, or `revert`. Keep branch names lowercase and use hyphens instead of spaces.
+
+Commit messages use the same type prefix and must follow the format enforced by the Husky hook:
+
+```
+<type>: <message>
+```
+
+For example:
+
+```
+fix: handle whitespace-only messages
+```
+
+Pull requests use `.github/PULL_REQUEST_TEMPLATE.md`. Complete the summary, scope, testing steps, and any API, configuration, or model changes. Add screenshots for UI changes. Keep each pull request focused on one area and split unrelated backend and frontend work when it can be reviewed separately.
+
+Before opening a pull request, run the checks in the previous section. If you retrain the model, update the notebook, include the new metrics, and replace both model copies.
+
 ## Notes and limits
 
 The dataset is not balanced and each source contributes only one class. All ham comes from the UCI collection and all spam comes from the Philippine dataset, so the model can learn source and language cues as well as spam cues. The 0.99 test score measures performance on that mixed split, not on live SMS traffic.
