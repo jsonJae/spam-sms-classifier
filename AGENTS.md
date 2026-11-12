@@ -12,6 +12,8 @@ SMS Guardian classifies a pasted text message as `spam` or `ham`. The FastAPI ba
 - `message_classifier.joblib` is the root model artifact. Keep it identical to `backend/message_classifier.joblib`.
 - `.github/PULL_REQUEST_TEMPLATE.md` is the pull request checklist.
 - `README.md` documents setup, the API, and the dataset.
+- `backend/README.md` documents the backend architecture, API, model loading, Docker, and CI/CD.
+- `frontend/README.md` documents the frontend architecture, proxy routes, Docker, and CI/CD.
 
 ## Commands
 
@@ -58,6 +60,7 @@ docker compose up --build
 - Run the checks before handing off work.
 - Do not commit unless the user asks.
 - Update `README.md` when endpoints, environment variables, commands, or model behavior change.
+- Keep `backend/README.md` and `frontend/README.md` aligned with changes to architecture, Docker, or CI/CD.
 
 ## Model and data
 
