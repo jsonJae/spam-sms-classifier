@@ -4,6 +4,7 @@
 
 Spam message classifier with a confidence score and signal checks.
 
+[![Live app](https://img.shields.io/badge/Live_app-Open-2ea44f)](https://smsguardian.jsondu.space/)
 [![Next.js](https://img.shields.io/badge/Next.js-16.4.6-black?logo=nextdotjs&logoColor=white)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19.3.0-61DAFB?logo=react&logoColor=black)](https://react.dev/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
@@ -11,7 +12,7 @@ Spam message classifier with a confidence score and signal checks.
 [![scikit-learn](https://img.shields.io/badge/scikit--learn-1.6.1-F7931E?logo=scikitlearn&logoColor=white)](https://scikit-learn.org/)
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)](https://docs.docker.com/compose/)
 
-[What it does](#what-it-does) · [Quick start](#quick-start) · [Contributing](#contributing) · [Documentation](#documentation)
+[Live app](https://smsguardian.jsondu.space/) · [What it does](#what-it-does) · [Quick start](#quick-start) · [Contributing](#contributing) · [Documentation](#documentation)
 
 </div>
 
