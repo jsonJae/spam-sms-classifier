@@ -8,6 +8,18 @@ services:
     environment:
       ALLOWED_ORIGINS: http://localhost:3000,http://127.0.0.1:3000
     restart: unless-stopped
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./backend
+          target: /app/backend
+          ignore:
+            - README.md
+            - requirements-dev.txt
+        - action: rebuild
+          path: ./backend/requirements.txt
+        - action: rebuild
+          path: ./backend/Dockerfile
 
   frontend:
     build:
@@ -20,3 +32,14 @@ services:
     depends_on:
       - backend
     restart: unless-stopped
+    develop:
+      watch:
+        - action: rebuild
+          path: ./frontend
+          ignore:
+            - node_modules/
+            - .next/
+            - out/
+            - tsconfig.tsbuildinfo
+            - README.md
+            - AGENTS.md

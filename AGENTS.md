@@ -51,6 +51,14 @@ Start both with Docker:
 docker compose up --build
 ```
 
+Apply Docker changes without stopping the stack:
+
+```
+docker compose up --watch
+```
+
+Backend source changes sync and restart the container. Dependency, Dockerfile, and frontend changes rebuild the affected image.
+
 ## Conventions
 
 - Branch from `main` with `<type>/<short-description>`, for example `feat/frontend-confidence-warning` or `fix/backend-empty-text`. Use lowercase and hyphens, not spaces.

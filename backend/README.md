@@ -166,6 +166,14 @@ Compose starts the backend with the frontend:
 docker compose up --build
 ```
 
+To apply backend changes without stopping the stack, use Compose Watch:
+
+```bash
+docker compose up --watch
+```
+
+The watch rules sync changes under `backend/` into `/app/backend` and restart the container, so Uvicorn loads the new code. Changes to `backend/requirements.txt` or `backend/Dockerfile` rebuild the image instead. The model is loaded at startup, so replacing `backend/message_classifier.joblib` also requires the container restart that Watch performs.
+
 The Compose service sets `ALLOWED_ORIGINS` for local frontend access. The build context excludes `.env` files, notebooks, caches, and `.git` through `.dockerignore`.
 
 > The Dockerfile runs Uvicorn as the default container user. Add a non-root user if your deployment policy requires one.

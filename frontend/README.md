@@ -158,6 +158,8 @@ docker compose up --build
 
 Compose sets `BACKEND_URL=http://backend:8000`, so the Next.js route handlers can reach the backend container. The image does not bake a backend URL into the client bundle when the proxy is used.
 
+`docker compose up --watch` uses the watch rules in the root `docker-compose.yml`. Because this image runs the compiled standalone build, frontend file changes trigger an image rebuild and container recreation, not hot reload. Use `npm run dev` when you want Next.js fast refresh.
+
 ## CI/CD
 
 | Workflow | Trigger | What it does |

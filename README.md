@@ -125,6 +125,14 @@ docker compose up --build
 
 Stop the services with `docker compose down`.
 
+To apply code changes without stopping the stack, run Compose Watch:
+
+```bash
+docker compose up --watch
+```
+
+Backend source changes sync and restart the container. Changes to `backend/requirements.txt`, `backend/Dockerfile`, or anything under `frontend/` rebuild the affected image. The frontend image runs the compiled Next.js build, so frontend edits still take a rebuild rather than hot reload.
+
 The frontend container gets `BACKEND_URL=http://backend:8000` from Compose. The backend allows requests from `http://localhost:3000` and `http://127.0.0.1:3000` by default.
 
 ### Local development
