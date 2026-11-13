@@ -111,14 +111,6 @@ export default function Home() {
     executeScan();
   }
 
-  function loadSample(sampleText: string) {
-    handleTextChange(sampleText);
-    const scanElem = document.getElementById("scan");
-    if (scanElem) {
-      scanElem.scrollIntoView({ behavior: "smooth" });
-    }
-  }
-
   return (
     <div data-entered={entered} className="min-h-dvh selection:bg-primary selection:text-ink">
       <noscript>
@@ -127,11 +119,11 @@ export default function Home() {
 
       {showSplash && <Splash onDone={dismissSplash} />}
 
-      {/* Sticky Header */}
+      {/* Fixed Sticky Header */}
       <SiteHeader />
 
       {/* Hero */}
-      <HeroSection onSelectSample={loadSample} />
+      <HeroSection />
 
       {/* Scanner Main Section */}
       <main
@@ -160,8 +152,8 @@ export default function Home() {
         {/* Threat Signals */}
         <ThreatSignals />
 
-        {/* Privacy & Architecture */}
-        <section className="mt-16 rounded-xl border-2 border-ink bg-paper/80 p-5 sm:p-8">
+        {/* Privacy, Documentation & Architecture */}
+        <section id="docs" className="mt-16 scroll-mt-28 rounded-xl border-2 border-ink bg-paper/80 p-5 sm:p-8">
           <div className="grid gap-6 md:grid-cols-3">
             <div>
               <h4 className="font-display text-lg font-bold text-ink">
