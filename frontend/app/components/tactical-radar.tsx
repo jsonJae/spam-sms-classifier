@@ -14,35 +14,35 @@ export type RadarBlip = {
 const DEFAULT_BLIPS: RadarBlip[] = [
   {
     id: "blip-1",
-    label: "Fake Bank Alert",
-    text: "URGENT: Your bank account has been suspended. Verify immediately at https://secure-bank-login.xyz",
-    angle: 0.8,
+    label: "GCash Ayuda Bait",
+    text: "GCash: Your account received PHP 1,500 Ayuda subsidy bonus. Claim now at http://gcash-rebates-portal.net",
+    angle: 0.85,
     isSpam: true,
-    confidence: 99,
+    confidence: 97.1,
   },
   {
     id: "blip-2",
-    label: "Gift Card Bait",
-    text: "Congratulations! You have won a $1,000 gift card. Claim now at http://bit.ly/claim",
-    angle: 2.5,
+    label: "BDO Security Lock",
+    text: "BDO Alert: Your online banking account has been locked. Verify immediately at https://bdo-online-security.xyz",
+    angle: 2.35,
     isSpam: true,
-    confidence: 98,
+    confidence: 97.2,
   },
   {
     id: "blip-3",
-    label: "Unpaid Parcel Fee",
-    text: "USPS: Your parcel is held due to $2.99 unpaid customs fee. Confirm address at parcel-tracker.net",
-    angle: 4.6,
+    label: "SIM Reg Advisory",
+    text: "Globe/GCash Advisory: Your SIM card will be deactivated in 24 hours. Update your SIM at http://sim-registration-portal.com",
+    angle: 4.85,
     isSpam: true,
-    confidence: 97,
+    confidence: 75.1,
   },
   {
     id: "blip-4",
-    label: "Safe Chat",
-    text: "Hey, are we still meeting for lunch tomorrow at noon? Let me know if you need a ride.",
-    angle: 3.4,
+    label: "Safe Meetup Chat",
+    text: "Hey bro, are we still meeting in Megamall at 5pm? Let me know when you arrive.",
+    angle: 3.55,
     isSpam: false,
-    confidence: 99,
+    confidence: 91.0,
   },
 ];
 
@@ -72,11 +72,7 @@ function getBlipPosition(
   };
 }
 
-export function TacticalRadar({
-  onSelectMessage,
-}: {
-  onSelectMessage?: (text: string) => void;
-} = {}) {
+export function TacticalRadar() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [activeBlip, setActiveBlip] = useState<RadarBlip | null>(DEFAULT_BLIPS[0]);
   const [isHovering, setIsHovering] = useState(false);

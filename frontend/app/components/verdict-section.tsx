@@ -68,9 +68,9 @@ export function VerdictSection({
                 <span>Safety reminders</span>
               </div>
               <div className="flex flex-col gap-1.5 text-muted-foreground">
-                <p>1. Never click shortened or unverified links from unknown senders.</p>
-                <p>2. Legitimate banks never ask for passwords or PINs via text.</p>
-                <p>3. Verify unexpected delivery notices directly on the courier&apos;s official app.</p>
+                <p>1. GCash, Maya, and Philippine banks will never send clickable links to reset your MPIN or OTP.</p>
+                <p>2. Beware of SMS claiming your SIM registration has expired or needs immediate reactivation.</p>
+                <p>3. Do not engage with job offers offering daily wages via WhatsApp, Viber, or Telegram.</p>
               </div>
             </div>
           </div>

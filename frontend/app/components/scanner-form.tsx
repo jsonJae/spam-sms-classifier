@@ -10,20 +10,20 @@ export type PresetExample = {
 
 export const PRESET_EXAMPLES: PresetExample[] = [
   {
-    label: "Gift scam",
-    text: "Congratulations! You have won a $1,000 gift card. Claim now at http://bit.ly/claim",
+    label: "GCash subsidy",
+    text: "GCash: Your account received PHP 1,500 Ayuda subsidy bonus. Claim now at http://gcash-rebates-portal.net",
   },
   {
-    label: "Bank urgent",
-    text: "URGENT: Your bank account will be suspended. Verify your details immediately at https://secure-bank-login.xyz",
+    label: "BDO locked",
+    text: "BDO Alert: Your online banking account has been locked. Verify immediately at https://bdo-online-security.xyz",
   },
   {
-    label: "Parcel fee",
-    text: "USPS: Your parcel is held due to $2.99 unpaid customs fee. Confirm address at parcel-tracker.net to avoid return.",
+    label: "SIM advisory",
+    text: "Globe/GCash Advisory: Your SIM card will be deactivated in 24 hours. Update your SIM at http://sim-registration-portal.com",
   },
   {
-    label: "Safe chat",
-    text: "Hey, are we still meeting for lunch tomorrow at noon? Let me know if you need a ride.",
+    label: "Safe meetup",
+    text: "Hey bro, are we still meeting in Megamall at 5pm? Let me know when you arrive.",
   },
 ];
 
@@ -59,10 +59,29 @@ export function ScannerForm({
       onSubmit={onSubmit}
       className="rounded-xl border-2 border-ink bg-card p-5 shadow-[8px_8px_0_0_#121410] sm:p-8"
     >
-      <div className="mb-5 border-b border-ink/10 pb-4">
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-ink/10 pb-4">
         <h2 className="font-display text-xl font-bold tracking-tight text-ink sm:text-2xl">
           Inspect a message
         </h2>
+
+        <button
+          type="submit"
+          disabled={!canSubmit}
+          aria-busy={loading}
+          className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border-2 border-ink bg-primary px-4 text-xs font-bold text-ink shadow-[2px_2px_0_0_#121410] transition hover:bg-primary-hover hover:shadow-[3px_3px_0_0_#121410] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[0_0_0_0_#121410] disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {loading ? (
+            <>
+              <RefreshCwIcon className="size-3.5 animate-spin text-ink" />
+              <span>Analyzing...</span>
+            </>
+          ) : (
+            <>
+              <RadarIcon className="size-3.5" />
+              <span>Check message</span>
+            </>
+          )}
+        </button>
       </div>
 
       <div className="flex flex-col gap-2">
@@ -121,25 +140,6 @@ export function ScannerForm({
             Ctrl + Enter to submit
           </span>
         </div>
-
-        <button
-          type="submit"
-          disabled={!canSubmit}
-          aria-busy={loading}
-          className="mt-2 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-lg border-2 border-ink bg-primary px-4 text-sm font-bold text-ink shadow-[3px_3px_0_0_#121410] transition hover:bg-primary-hover hover:shadow-[4px_4px_0_0_#121410] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[0_0_0_0_#121410] disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {loading ? (
-            <>
-              <RefreshCwIcon className="size-4 animate-spin text-ink" />
-              <span>Analyzing...</span>
-            </>
-          ) : (
-            <>
-              <RadarIcon className="size-4" />
-              <span>Check message</span>
-            </>
-          )}
-        </button>
       </div>
 
       {/* Preset Samples */}

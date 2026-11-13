@@ -3,24 +3,24 @@ import { LinkIcon, ClockIcon, GiftIcon } from "./icons";
 export const SIGNALS = [
   {
     icon: LinkIcon,
-    title: "Obfuscated Links",
+    title: "Obfuscated Phishing Links",
     technique: "Domain Cloaking",
-    body: "Shortened URLs, raw IPs, or newly registered domains mask the real destination and slip past basic filters.",
-    advice: "Inspect the root destination before clicking any link.",
+    body: "Fake GCash or Maya portals, raw IP addresses, or lookalike banking domains designed to harvest e-wallet credentials.",
+    advice: "Check the exact domain. Authentic Philippine banks and e-wallets do not use bit.ly or raw domains.",
   },
   {
     icon: ClockIcon,
-    title: "Manufactured Urgency",
-    technique: "Psychological Coercion",
-    body: "Words like 'suspended', 'final notice', or 'action required' push you to react before you can verify the sender.",
-    advice: "Legitimate institutions do not demand crisis-speed action via text.",
+    title: "Manufactured SIM Urgency",
+    technique: "SIM Deactivation Threats",
+    body: "Advisories claiming your SIM card, GCash, or Maya account will be blocked within 24 hours to panic you into acting.",
+    advice: "Telcos and banks will never mandate immediate unverified link clicks to preserve your SIM registration.",
   },
   {
     icon: GiftIcon,
-    title: "Reward Bait",
+    title: "Ayuda & Task Bait",
     technique: "Incentive Exploitation",
-    body: "Unsolicited claims of winnings, gift cards, or refunds lure you into sharing credentials or paying a processing fee.",
-    advice: "Unsolicited cash or prize messages are almost always fraudulent.",
+    body: "Claims of unsolicited Ayuda subsidies, Lazada/Shopee part-time task jobs, or lottery payouts requiring processing fees.",
+    advice: "Unsolicited cash bonuses, subsidies, or high-paying easy tasks via SMS are scams.",
   },
 ];
 
