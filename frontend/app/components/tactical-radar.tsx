@@ -6,10 +6,9 @@ export type RadarBlip = {
   id: string;
   label: string;
   text: string;
-  distance: number; // 0 to 1
-  angle: number; // radians
+  angle: number; // bearing around the radar, radians
   isSpam: boolean;
-  confidence: number;
+  confidence: number; // 0-100; also sets distance from center
 };
 
 const DEFAULT_BLIPS: RadarBlip[] = [
@@ -17,7 +16,6 @@ const DEFAULT_BLIPS: RadarBlip[] = [
     id: "blip-1",
     label: "Fake Bank Alert",
     text: "URGENT: Your bank account has been suspended. Verify immediately at https://secure-bank-login.xyz",
-    distance: 0.65,
     angle: 0.8,
     isSpam: true,
     confidence: 99,
@@ -26,7 +24,6 @@ const DEFAULT_BLIPS: RadarBlip[] = [
     id: "blip-2",
     label: "Gift Card Bait",
     text: "Congratulations! You have won a $1,000 gift card. Claim now at http://bit.ly/claim",
-    distance: 0.42,
     angle: 2.5,
     isSpam: true,
     confidence: 98,
@@ -35,7 +32,6 @@ const DEFAULT_BLIPS: RadarBlip[] = [
     id: "blip-3",
     label: "Unpaid Parcel Fee",
     text: "USPS: Your parcel is held due to $2.99 unpaid customs fee. Confirm address at parcel-tracker.net",
-    distance: 0.82,
     angle: 4.6,
     isSpam: true,
     confidence: 97,
@@ -44,12 +40,37 @@ const DEFAULT_BLIPS: RadarBlip[] = [
     id: "blip-4",
     label: "Safe Chat",
     text: "Hey, are we still meeting for lunch tomorrow at noon? Let me know if you need a ride.",
-    distance: 0.32,
     angle: 3.4,
     isSpam: false,
     confidence: 99,
   },
 ];
+
+const RADAR_INSET = 16;
+const BLIP_LABEL_GAP = 10;
+const BLIP_LABEL_MARGIN = 6;
+
+function getRadarGeometry(width: number, height: number) {
+  return {
+    centerX: width / 2,
+    centerY: height / 2,
+    radius: Math.max(0, Math.min(width, height) / 2 - RADAR_INSET),
+  };
+}
+
+function getBlipPosition(
+  blip: RadarBlip,
+  centerX: number,
+  centerY: number,
+  radius: number
+) {
+  const confidence = Math.min(100, Math.max(0, blip.confidence));
+  const blipRadius = (radius * confidence) / 100;
+  return {
+    x: centerX + Math.cos(blip.angle) * blipRadius,
+    y: centerY + Math.sin(blip.angle) * blipRadius,
+  };
+}
 
 export function TacticalRadar({
   onSelectMessage,
@@ -75,14 +96,11 @@ export function TacticalRadar({
     const blips = [...DEFAULT_BLIPS];
 
     const render = () => {
-      const rect = canvas.getBoundingClientRect();
-      const width = rect.width;
-      const height = rect.height;
-      const centerX = width / 2;
-      const centerY = height / 2;
-      const radius = Math.min(centerX, centerY) - 16;
+      const width = canvas.clientWidth;
+      const height = canvas.clientHeight;
+      const { centerX, centerY, radius } = getRadarGeometry(width, height);
 
-      if (radius <= 0) return;
+      if (width <= 0 || height <= 0 || radius <= 0) return;
 
       ctx.clearRect(0, 0, width, height);
 
@@ -110,14 +128,16 @@ export function TacticalRadar({
       ctx.lineWidth = 1;
       ctx.stroke();
 
-      // Range labels in clean natural font
-      ctx.fillStyle = "rgba(243, 239, 228, 0.35)";
-      ctx.font = "10px sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText("25%", centerX, centerY - radius * 0.25 + 12);
-      ctx.fillText("50%", centerX, centerY - radius * 0.5 + 12);
-      ctx.fillText("75%", centerX, centerY - radius * 0.75 + 12);
-      ctx.fillText("100%", centerX, centerY - radius + 12);
+      // Confidence scale, read outward along the lower half of the vertical axis
+      // so the labels stay clear of the blips clustered at the rim.
+      ctx.fillStyle = "rgba(243, 239, 228, 0.4)";
+      ctx.font = "10px ui-monospace, SFMono-Regular, Menlo, monospace";
+      ctx.textAlign = "left";
+      ctx.textBaseline = "middle";
+      rings.forEach((ratio) => {
+        ctx.fillText(`${Math.round(ratio * 100)}%`, centerX + 7, centerY + radius * ratio);
+      });
+      ctx.textBaseline = "alphabetic";
 
       // Draw Sweep Cone
       if (!reducedMotion) {
@@ -158,8 +178,7 @@ export function TacticalRadar({
 
       // Render Detected Blips
       blips.forEach((blip) => {
-        const blipX = centerX + Math.cos(blip.angle) * (radius * blip.distance);
-        const blipY = centerY + Math.sin(blip.angle) * (radius * blip.distance);
+        const { x: blipX, y: blipY } = getBlipPosition(blip, centerX, centerY, radius);
 
         // Calculate proximity to sweep beam for phosphor pulse
         const angleDiff = ((sweepAngle - blip.angle) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
@@ -184,12 +203,29 @@ export function TacticalRadar({
           : `rgba(${color}, 0.7)`;
         ctx.fill();
 
-        // Blip text label
+        // Blip text label, kept inside the canvas while staying beside its dot
         ctx.fillStyle = isCurrent ? "#fff" : "rgba(243, 239, 228, 0.6)";
         ctx.font = isCurrent ? "bold 11px sans-serif" : "10px sans-serif";
-        ctx.textAlign = blipX > centerX ? "left" : "right";
-        const labelOffset = blipX > centerX ? 10 : -10;
-        ctx.fillText(blip.label, blipX + labelOffset, blipY + 3);
+        ctx.textBaseline = "middle";
+        const labelWidth = ctx.measureText(blip.label).width;
+        let labelX = blipX + (blipX > centerX ? BLIP_LABEL_GAP : -BLIP_LABEL_GAP);
+        let labelAlign: CanvasTextAlign = blipX > centerX ? "left" : "right";
+
+        if (labelAlign === "left" && labelX + labelWidth > width - BLIP_LABEL_MARGIN) {
+          labelAlign = "right";
+          labelX = blipX - BLIP_LABEL_GAP;
+        } else if (labelAlign === "right" && labelX - labelWidth < BLIP_LABEL_MARGIN) {
+          labelAlign = "left";
+          labelX = blipX + BLIP_LABEL_GAP;
+        }
+
+        const labelY = Math.min(
+          height - BLIP_LABEL_MARGIN,
+          Math.max(BLIP_LABEL_MARGIN + 6, blipY)
+        );
+        ctx.textAlign = labelAlign;
+        ctx.fillText(blip.label, labelX, labelY);
+        ctx.textBaseline = "alphabetic";
       });
     };
 
@@ -199,13 +235,14 @@ export function TacticalRadar({
     };
 
     const syncSize = () => {
-      const rect = canvas.getBoundingClientRect();
+      const width = canvas.clientWidth;
+      const height = canvas.clientHeight;
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = Math.max(1, Math.round(rect.width * dpr));
-      canvas.height = Math.max(1, Math.round(rect.height * dpr));
+      canvas.width = Math.max(1, Math.round(width * dpr));
+      canvas.height = Math.max(1, Math.round(height * dpr));
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      const visible = rect.width > 32 && rect.height > 32;
+      const visible = width > 32 && height > 32;
 
       if (reducedMotion) {
         if (visible) render();
@@ -235,12 +272,18 @@ export function TacticalRadar({
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    // The radar panel floats with a CSS scale, so convert pointer coordinates
+    // back into the canvas's untransformed layout space before hit-testing.
     const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-    const radius = Math.min(centerX, centerY) - 16;
+    const scaleX = canvas.clientWidth > 0 ? rect.width / canvas.clientWidth : 1;
+    const scaleY = canvas.clientHeight > 0 ? rect.height / canvas.clientHeight : 1;
+    const x = (e.clientX - rect.left) / scaleX;
+    const y = (e.clientY - rect.top) / scaleY;
+
+    const { centerX, centerY, radius } = getRadarGeometry(
+      canvas.clientWidth,
+      canvas.clientHeight
+    );
 
     if (radius <= 0) return;
 
@@ -249,8 +292,7 @@ export function TacticalRadar({
     let minDist = 36; // 36px hit radius
 
     DEFAULT_BLIPS.forEach((blip) => {
-      const blipX = centerX + Math.cos(blip.angle) * (radius * blip.distance);
-      const blipY = centerY + Math.sin(blip.angle) * (radius * blip.distance);
+      const { x: blipX, y: blipY } = getBlipPosition(blip, centerX, centerY, radius);
       const dist = Math.hypot(blipX - x, blipY - y);
       if (dist < minDist) {
         minDist = dist;
@@ -271,7 +313,7 @@ export function TacticalRadar({
           <span className="size-2 rounded-full bg-primary" />
           <span className="font-semibold text-paper">Tactical Radar Interceptor</span>
         </div>
-        <span className="text-[11px] text-paper/40">360° frequency scan</span>
+        <span className="text-[11px] text-paper/50">ring scale · verdict confidence</span>
       </div>
 
       {/* Main Canvas Viewport */}
