@@ -3,7 +3,7 @@ import { OverdriveShield } from "./icons";
 export function SiteFooter() {
   return (
     <footer className="border-t-2 border-ink bg-[#080a08] text-paper">
-      <div className="mx-auto w-full max-w-6xl px-5 pt-12 sm:px-8">
+      <div className="mx-auto w-full max-w-6xl px-4 pt-12 sm:px-8">
         <div className="flex flex-wrap items-start justify-between gap-10 pb-10">
           <div className="max-w-sm">
             <div className="flex items-center gap-3">
@@ -56,7 +56,7 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-2 border-t border-paper/10 py-6 text-xs text-paper/45 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-2 border-t border-paper/10 pt-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] text-xs text-paper/45 sm:flex-row sm:items-center sm:justify-between">
           <p>© 2026 SMS Guardian</p>
           <p>Verdicts are probabilistic estimates, not legal advice.</p>
         </div>

@@ -120,7 +120,7 @@ export default function Home() {
   }
 
   return (
-    <div data-entered={entered} className="min-h-screen selection:bg-primary selection:text-ink">
+    <div data-entered={entered} className="min-h-dvh selection:bg-primary selection:text-ink">
       <noscript>
         <style>{`[data-splash]{display:none!important}`}</style>
       </noscript>
@@ -136,7 +136,7 @@ export default function Home() {
       {/* Scanner Main Section */}
       <main
         id="scan"
-        className="relative z-10 mx-auto w-full max-w-6xl scroll-mt-28 px-5 pt-12 sm:px-8 sm:pt-16 pb-20"
+        className="relative z-10 mx-auto w-full max-w-6xl scroll-mt-28 px-4 pt-12 pb-20 sm:px-8 sm:pt-16"
       >
         <div className="grid gap-8 lg:grid-cols-[1.08fr_0.92fr] lg:items-start">
           <ScannerForm
@@ -161,7 +161,7 @@ export default function Home() {
         <ThreatSignals />
 
         {/* Privacy & Architecture */}
-        <section className="mt-16 rounded-xl border-2 border-ink bg-paper/80 p-6 sm:p-8">
+        <section className="mt-16 rounded-xl border-2 border-ink bg-paper/80 p-5 sm:p-8">
           <div className="grid gap-6 md:grid-cols-3">
             <div>
               <h4 className="font-display text-lg font-bold text-ink">

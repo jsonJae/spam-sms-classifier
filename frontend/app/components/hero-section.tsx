@@ -26,7 +26,7 @@ export function HeroSection({
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(243,239,228,0.06)_1px,transparent_1px)] [background-size:24px_24px] opacity-70"
       />
 
-      <div className="relative mx-auto grid w-full max-w-6xl items-center gap-12 px-5 sm:px-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14">
+      <div className="relative mx-auto grid w-full max-w-6xl items-center gap-12 px-4 sm:px-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14">
         <div className="hero-enter flex flex-col items-start gap-6">
           <h1 className="font-display text-[clamp(40px,7.5vw,78px)] font-bold leading-[0.93] tracking-[-0.04em] text-balance">
             Verify suspicious <span className="relative inline-block text-primary underline decoration-primary/40 underline-offset-8 transition-transform duration-300 hover:scale-[1.02]">text messages</span> instantly.
@@ -36,7 +36,7 @@ export function HeroSection({
             Paste a banking alert, delivery notice, or unfamiliar text. The classifier returns an objective verdict and confidence score in under 20 milliseconds.
           </p>
 
-          <div className="flex flex-nowrap items-center gap-2 overflow-x-auto max-w-full pt-2 text-xs no-scrollbar">
+          <div className="flex max-w-full flex-wrap items-center gap-2 pt-2 text-xs">
             <span className="shrink-0 whitespace-nowrap rounded-lg border border-paper/15 bg-paper/[0.04] px-3 py-1.5 text-paper/80 transition-colors hover:border-paper/30">
               <span className="text-primary font-semibold mr-1.5">Capacity:</span> 5,000 characters
             </span>
