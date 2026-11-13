@@ -99,14 +99,14 @@ export function ResultCard({
       className={`relative overflow-hidden rounded-xl border-2 p-5 sm:p-6 motion-safe:animate-result-in shadow-[5px_5px_0_0_#121410] ${verdict.card}`}
     >
       {/* Top Banner Row */}
-      <div className="flex items-center justify-between gap-3 border-b border-ink/10 pb-3">
-        <div className="flex items-center gap-2">
+      <div className="flex items-center justify-between gap-2 border-b border-ink/10 pb-3">
+        <div className="flex min-w-0 items-center gap-2">
           <span
-            className={`grid size-7 place-items-center rounded-md border text-white ${verdict.badge}`}
+            className={`grid size-7 shrink-0 place-items-center rounded-md border text-white ${verdict.badge}`}
           >
             <Icon className="size-4" />
           </span>
-          <span className="text-xs font-semibold tracking-wide">
+          <span className="text-[11px] font-semibold tracking-wide whitespace-nowrap sm:text-xs">
             {verdict.statusTag}
           </span>
         </div>
@@ -114,37 +114,34 @@ export function ResultCard({
         <button
           type="button"
           onClick={handleCopy}
-          className="inline-flex items-center gap-1.5 rounded-md border border-ink/20 bg-card px-2.5 py-1 text-xs font-medium text-ink transition hover:border-ink hover:bg-paper active:scale-95"
+          className="inline-flex min-h-10 shrink-0 items-center gap-1.5 rounded-md border border-ink/20 bg-card px-2.5 py-1.5 text-xs font-medium text-ink transition hover:border-ink hover:bg-paper active:scale-95 sm:min-h-0 sm:py-1"
           title="Copy report to clipboard"
+          aria-label="Copy report to clipboard"
         >
           {copied ? (
-            <>
-              <CheckIcon className="size-3.5 text-success" />
-              <span>Copied</span>
-            </>
+            <CheckIcon className="size-3.5 text-success" />
           ) : (
-            <>
-              <ClipboardIcon className="size-3.5 text-muted-foreground" />
-              <span>Copy report</span>
-            </>
+            <ClipboardIcon className="size-3.5 text-muted-foreground" />
           )}
+          <span className="sm:hidden">{copied ? "Copied" : "Copy"}</span>
+          <span className="hidden sm:inline">{copied ? "Copied" : "Copy report"}</span>
         </button>
       </div>
 
       {/* Main Verdict & Confidence Gauge */}
       <div className="mt-4 flex flex-col gap-4">
-        <div className="flex items-baseline justify-between gap-4">
-          <div>
-            <h3 className={`font-display text-2xl font-bold tracking-tight ${verdict.accentText}`}>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
+          <div className="min-w-0">
+            <h3 className={`font-display text-xl font-bold tracking-tight text-balance sm:text-2xl ${verdict.accentText}`}>
               {verdict.title}
             </h3>
-            <p className="mt-1 text-xs leading-relaxed text-muted-foreground sm:text-sm">
+            <p className="mt-1 text-xs leading-relaxed text-muted-foreground text-pretty sm:text-sm">
               {verdict.summary}
             </p>
           </div>
 
-          <div className="shrink-0 text-right">
-            <div className="flex items-baseline justify-end gap-0.5 text-3xl font-bold tracking-tight text-ink tabular-nums">
+          <div className="flex shrink-0 items-baseline gap-2 sm:block sm:text-right">
+            <div className="flex items-baseline gap-0.5 text-3xl font-bold tracking-tight text-ink tabular-nums sm:justify-end">
               <span>{hasScore ? confidence : "n/a"}</span>
               {hasScore && <span className="text-base font-normal text-muted-foreground">%</span>}
             </div>

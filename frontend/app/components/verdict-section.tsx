@@ -43,7 +43,7 @@ export function VerdictSection({
       ) : result ? (
         <ResultCard result={result} scannedText={analyzedText} />
       ) : (
-        <div className="rounded-xl border-2 border-dashed border-ink/25 bg-card/60 p-6 sm:p-7">
+        <div className="rounded-xl border-2 border-dashed border-ink/25 bg-card/60 p-5 sm:p-7">
           <div className="flex items-center justify-between border-b border-ink/10 pb-3">
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <span className="size-2 rounded-full bg-ink/25" aria-hidden="true" />
@@ -55,7 +55,7 @@ export function VerdictSection({
           </div>
 
           <div className="mt-5 flex flex-col items-start gap-3">
-            <h3 className="font-display text-xl font-bold tracking-tight text-ink">
+            <h3 className="font-display text-lg font-bold tracking-tight text-ink sm:text-xl">
               Awaiting message input
             </h3>
             <p className="text-xs leading-relaxed text-muted-foreground sm:text-sm text-pretty">
