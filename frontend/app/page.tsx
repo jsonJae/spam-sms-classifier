@@ -6,6 +6,7 @@ import { type Prediction } from "./components/result-card";
 import { ScannerForm } from "./components/scanner-form";
 import { SiteFooter } from "./components/site-footer";
 import { SiteHeader } from "./components/site-header";
+import { SlideReveal } from "./components/slide-reveal";
 import { Splash } from "./components/splash";
 import { ThreatSignals } from "./components/threat-signals";
 import { VerdictSection } from "./components/verdict-section";
@@ -130,59 +131,65 @@ export default function Home() {
         id="scan"
         className="relative z-10 mx-auto w-full max-w-6xl scroll-mt-28 px-4 pt-12 pb-20 sm:px-8 sm:pt-16"
       >
-        <div className="grid gap-8 lg:grid-cols-[1.08fr_0.92fr] lg:items-start">
-          <ScannerForm
-            text={text}
-            loading={loading}
-            canSubmit={canSubmit}
-            onTextChange={handleTextChange}
-            onReset={reset}
-            onSubmit={handleSubmit}
-          />
+        <SlideReveal>
+          <div className="grid gap-8 lg:grid-cols-[1.08fr_0.92fr] lg:items-start">
+            <ScannerForm
+              text={text}
+              loading={loading}
+              canSubmit={canSubmit}
+              onTextChange={handleTextChange}
+              onReset={reset}
+              onSubmit={handleSubmit}
+            />
 
-          <VerdictSection
-            loading={loading}
-            error={error}
-            result={result}
-            analyzedText={analyzedText}
-            onRetry={executeScan}
-          />
-        </div>
+            <VerdictSection
+              loading={loading}
+              error={error}
+              result={result}
+              analyzedText={analyzedText}
+              onRetry={executeScan}
+            />
+          </div>
+        </SlideReveal>
 
         {/* Threat Signals */}
-        <ThreatSignals />
+        <SlideReveal delay={60}>
+          <ThreatSignals />
+        </SlideReveal>
 
         {/* Privacy, Documentation & Architecture */}
-        <section id="docs" className="mt-16 scroll-mt-28 rounded-xl border-2 border-ink bg-paper/80 p-5 sm:p-8">
-          <div className="grid gap-6 md:grid-cols-3">
-            <div>
-              <h4 className="font-display text-lg font-bold text-ink">
-                Zero persistence
-              </h4>
-              <p className="mt-1 text-xs leading-relaxed text-muted-foreground sm:text-sm">
-                Message payloads are processed in memory and discarded immediately. No logs, databases, or cookies track your scans.
-              </p>
-            </div>
+        <SlideReveal delay={60}>
+          <section id="docs" className="mt-16 scroll-mt-28 rounded-xl border-2 border-ink bg-paper/80 p-5 sm:p-8">
+            <div className="grid gap-6 md:grid-cols-3">
+              <div>
+                <h4 className="font-display text-lg font-bold text-ink">
+                  Zero persistence
+                </h4>
+                <p className="mt-1 text-xs leading-relaxed text-muted-foreground sm:text-sm">
+                  Message payloads are processed in memory and discarded immediately. No logs, databases, or cookies track your scans.
+                </p>
+              </div>
 
-            <div>
-              <h4 className="font-display text-lg font-bold text-ink">
-                Scikit-Learn + FastAPI
-              </h4>
-              <p className="mt-1 text-xs leading-relaxed text-muted-foreground sm:text-sm">
-                Trained on real-world SMS corpora. TF-IDF tokenization generates calibrated probabilistic verdicts.
-              </p>
-            </div>
+              <div>
+                <h4 className="font-display text-lg font-bold text-ink">
+                  Scikit-Learn + FastAPI
+                </h4>
+                <p className="mt-1 text-xs leading-relaxed text-muted-foreground sm:text-sm">
+                  Trained on real-world SMS corpora. TF-IDF tokenization generates calibrated probabilistic verdicts.
+                </p>
+              </div>
 
-            <div>
-              <h4 className="font-display text-lg font-bold text-ink">
-                Sub-20ms evaluation
-              </h4>
-              <p className="mt-1 text-xs leading-relaxed text-muted-foreground sm:text-sm">
-                Built for quick decisions before you answer phone prompts, verify accounts, or tap unknown links.
-              </p>
+              <div>
+                <h4 className="font-display text-lg font-bold text-ink">
+                  Sub-20ms evaluation
+                </h4>
+                <p className="mt-1 text-xs leading-relaxed text-muted-foreground sm:text-sm">
+                  Built for quick decisions before you answer phone prompts, verify accounts, or tap unknown links.
+                </p>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </SlideReveal>
       </main>
 
       {/* Footer */}
