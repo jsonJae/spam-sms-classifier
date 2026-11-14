@@ -4,10 +4,12 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { GitHubIcon, OverdriveShield } from "./icons";
 
 const NAV_LINKS = [
-  { href: "#top", label: "About" },
-  { href: "#scan", label: "Scanner" },
-  { href: "#docs", label: "Docs" },
+  { href: "#top", target: "top", label: "About" },
+  { href: "#scan", target: "scan", label: "Scanner" },
+  { href: "#signals", target: "signals", label: "Docs" },
 ];
+
+const SECTION_IDS = NAV_LINKS.map((link) => link.target);
 
 type Indicator = {
   x: number;
@@ -21,9 +23,11 @@ export function SiteHeader() {
   const [indicator, setIndicator] = useState<Indicator>({ x: 0, width: 0 });
   const [indicatorReady, setIndicatorReady] = useState(false);
 
+  const headerRef = useRef<HTMLElement>(null);
   const navRef = useRef<HTMLElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const linkRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
+  const pendingScrollRef = useRef<string | null>(null);
 
   const measureIndicator = useCallback(() => {
     const nav = navRef.current;
@@ -51,24 +55,23 @@ export function SiteHeader() {
         return previous;
       });
 
-      const sections = ["top", "scan", "docs"];
       const atBottom =
         y + window.innerHeight >= document.documentElement.scrollHeight - 2;
 
       if (atBottom) {
-        setActiveSection(sections[sections.length - 1]);
+        setActiveSection(SECTION_IDS[SECTION_IDS.length - 1]);
         return;
       }
 
       const marker = y + Math.min(160, window.innerHeight * 0.3);
 
-      for (let i = sections.length - 1; i >= 0; i--) {
-        const el = document.getElementById(sections[i]);
+      for (let i = SECTION_IDS.length - 1; i >= 0; i--) {
+        const el = document.getElementById(SECTION_IDS[i]);
         if (!el) continue;
 
         const sectionTop = el.getBoundingClientRect().top + y;
         if (sectionTop <= marker) {
-          setActiveSection(sections[i]);
+          setActiveSection(SECTION_IDS[i]);
           return;
         }
       }
@@ -130,28 +133,47 @@ export function SiteHeader() {
     return () => desktop.removeEventListener("change", handleChange);
   }, []);
 
+  const scrollToSection = useCallback((target: string) => {
+    const element = document.getElementById(target);
+    if (!element) return;
+
+    const headerHeight =
+      headerRef.current?.getBoundingClientRect().height ?? 0;
+    const top =
+      element.getBoundingClientRect().top + window.scrollY - headerHeight - 16;
+
+    window.scrollTo({ top: Math.max(top, 0), behavior: "smooth" });
+  }, []);
+
+  useEffect(() => {
+    if (menuOpen) return;
+
+    const target = pendingScrollRef.current;
+    if (!target) return;
+
+    pendingScrollRef.current = null;
+    const frame = requestAnimationFrame(() => {
+      requestAnimationFrame(() => scrollToSection(target));
+    });
+
+    return () => cancelAnimationFrame(frame);
+  }, [menuOpen, scrollToSection]);
+
   function goToSection(href: string) {
-    const target = href.slice(1);
+    pendingScrollRef.current = href.slice(1);
     setMenuOpen(false);
     menuButtonRef.current?.focus({ preventScroll: true });
-
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        document
-          .getElementById(target)
-          ?.scrollIntoView({ behavior: "smooth", block: "start" });
-      });
-    });
   }
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center px-4 pt-3 pb-2 sm:px-6 sm:pt-4">
+    <div className="pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center px-0 pt-0 pb-0 lg:px-6 lg:pt-4 lg:pb-2">
       <div className="pointer-events-auto relative w-full max-w-4xl">
         <header
-          className={`relative z-50 mx-auto flex w-full items-center justify-between border-2 border-transparent bg-transparent transition-[max-width,height,border-radius,box-shadow,background-color] duration-[560ms] ease-[cubic-bezier(0.22,1,0.36,1)] lg:border-ink lg:bg-paper/95 lg:backdrop-blur-md ${
+          ref={headerRef}
+          className={`relative z-50 mx-auto flex h-15 w-full items-center justify-between border-b-2 border-ink bg-paper/95 px-4 backdrop-blur-md transition-[max-width,height,border-radius,border-width,box-shadow,background-color] duration-[560ms] ease-[cubic-bezier(0.22,1,0.36,1)] sm:px-5 lg:rounded-xl lg:border-2 lg:border-ink ${
             scrolled
-              ? "h-15 max-w-4xl rounded-xl px-4 shadow-none sm:px-5 lg:h-13 lg:max-w-xl lg:rounded-full lg:px-5 lg:shadow-[0_4px_16px_-4px_rgba(18,20,16,0.18)] lg:duration-[380ms]"
-              : "h-15 max-w-4xl rounded-xl px-4 shadow-none sm:px-5 lg:shadow-[0_2px_8px_-2px_rgba(18,20,16,0.12)]"
+              ? "max-w-4xl lg:h-13 lg:max-w-xl lg:rounded-full lg:px-5 lg:shadow-[0_4px_16px_-4px_rgba(18,20,16,0.18)] lg:duration-[380ms]"
+              : "max-w-4xl lg:shadow-[0_2px_8px_-2px_rgba(18,20,16,0.12)]"
           }`}
         >
           <a
@@ -170,7 +192,7 @@ export function SiteHeader() {
                 animated
               />
             </span>
-            <span className="font-display text-base font-bold tracking-tight text-paper mix-blend-difference sm:text-lg lg:text-ink lg:mix-blend-normal">
+            <span className="font-display text-base font-bold tracking-tight text-ink sm:text-lg">
               SMS Guardian
             </span>
           </a>
@@ -194,7 +216,7 @@ export function SiteHeader() {
             />
 
             {NAV_LINKS.map((link) => {
-              const section = link.href.slice(1);
+              const section = link.target;
               const isActive = activeSection === section;
 
               return (
@@ -204,6 +226,10 @@ export function SiteHeader() {
                     linkRefs.current[section] = element;
                   }}
                   href={link.href}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    scrollToSection(section);
+                  }}
                   aria-current={isActive ? "location" : undefined}
                   className={`relative z-10 rounded-lg border-2 border-transparent px-3 py-1.5 text-xs font-bold tracking-tight transition-colors duration-200 sm:px-4 sm:text-sm ${
                     isActive
@@ -262,7 +288,7 @@ export function SiteHeader() {
           <div className="flex h-full flex-col px-6 pt-28 pb-[calc(2.5rem+env(safe-area-inset-bottom))] sm:px-10 sm:pt-32">
             <nav aria-label="Mobile Page Sections" className="flex flex-col">
               {NAV_LINKS.map((link, index) => {
-                const section = link.href.slice(1);
+                const section = link.target;
                 const isActive = activeSection === section;
 
                 return (
@@ -308,40 +334,42 @@ export function SiteHeader() {
                   </a>
                 );
               })}
-            </nav>
 
-            <div className="mt-auto flex flex-col gap-4 pt-10">
               <a
                 href="https://github.com/jsonJae/spam-sms-classifier"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setMenuOpen(false)}
-                className="group flex items-center justify-between gap-3 rounded-xl border-2 border-ink bg-card px-4 py-3.5 text-sm font-bold text-ink shadow-[3px_3px_0_0_#121410] transition-[background-color,box-shadow,transform] duration-200 hover:bg-primary-hover hover:shadow-[5px_5px_0_0_#121410] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
+                style={{
+                  transitionDelay: menuOpen
+                    ? `${120 + NAV_LINKS.length * 70}ms`
+                    : "0ms",
+                }}
+                className={`group flex items-center justify-between gap-4 border-b-2 border-ink/10 py-5 transition-[transform,opacity] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                  menuOpen ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
+                }`}
               >
-                <span className="flex items-center gap-2.5">
-                  <GitHubIcon className="size-4" />
-                  <span>View on GitHub</span>
+                <span className="flex items-center gap-3 font-display text-4xl font-bold tracking-tight text-ink transition-colors duration-200 group-hover:text-primary sm:text-5xl">
+                  <GitHubIcon className="size-7 shrink-0 sm:size-8" />
+                  GitHub
                 </span>
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                  className="size-4 text-ink/50 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                >
-                  <path d="M7 17 17 7" />
-                  <path d="M7 7h10v10" />
-                </svg>
+                <span className="grid size-9 shrink-0 place-items-center rounded-full border-2 border-ink/15 text-ink/40 transition-all duration-200 group-hover:border-primary group-hover:bg-primary group-hover:text-ink">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                    className="size-4 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                  >
+                    <path d="M7 17 17 7" />
+                    <path d="M7 7h10v10" />
+                  </svg>
+                </span>
               </a>
-
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <span className="size-1.5 rounded-full bg-accent" aria-hidden="true" />
-                <span>Processed in memory. Nothing is stored.</span>
-              </div>
-            </div>
+            </nav>
           </div>
         </div>
       </div>
