@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { HeroSection } from "./components/hero-section";
+import { ModelPipeline } from "./components/model-pipeline";
 import { type Prediction } from "./components/result-card";
 import { ScannerForm } from "./components/scanner-form";
 import { SiteFooter } from "./components/site-footer";
@@ -155,6 +156,11 @@ export default function Home() {
         {/* Threat Signals */}
         <SlideReveal delay={60}>
           <ThreatSignals />
+        </SlideReveal>
+
+        {/* Model pipeline */}
+        <SlideReveal delay={60}>
+          <ModelPipeline />
         </SlideReveal>
 
         {/* Privacy, Documentation & Architecture */}

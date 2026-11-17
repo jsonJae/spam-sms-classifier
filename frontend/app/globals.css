@@ -195,6 +195,124 @@
   }
 }
 
+/* Model pipeline: one signal pulse travels stage to stage */
+@keyframes pipeline-fill {
+  from {
+    transform: scale(var(--fill-from-x, 1), var(--fill-from-y, 0));
+  }
+  to {
+    transform: scale(1, 1);
+  }
+}
+
+@keyframes pipeline-node-lit {
+  0% {
+    transform: scale(1);
+    background-color: var(--color-card);
+    box-shadow: 0 0 0 0 rgba(255, 92, 26, 0.45);
+  }
+  45% {
+    transform: scale(1.28);
+    background-color: var(--color-primary);
+    box-shadow: 0 0 0 8px rgba(255, 92, 26, 0.18);
+  }
+  100% {
+    transform: scale(1);
+    background-color: var(--color-primary);
+    box-shadow: 0 0 0 0 rgba(255, 92, 26, 0);
+  }
+}
+
+@keyframes pipeline-core-lit {
+  to {
+    background-color: var(--color-ink);
+  }
+}
+
+@keyframes pipeline-card-lit {
+  0%,
+  100% {
+    translate: 0 0;
+    border-color: var(--color-ink);
+    box-shadow: 5px 5px 0 0 var(--color-ink);
+  }
+  35% {
+    translate: -2px -2px;
+    border-color: var(--color-primary);
+    box-shadow: 7px 7px 0 0 var(--color-primary);
+  }
+}
+
+@keyframes pipeline-spec-lit {
+  0% {
+    background-color: var(--color-paper);
+  }
+  35% {
+    background-color: rgba(255, 92, 26, 0.14);
+  }
+  100% {
+    background-color: var(--color-paper);
+  }
+}
+
+@keyframes pipeline-badge-in {
+  from {
+    opacity: 0;
+    transform: scale(0.6) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.pipeline-track-fill {
+  --fill-from-x: 1;
+  --fill-from-y: 0;
+  transform: scale(var(--fill-from-x), var(--fill-from-y));
+  transform-origin: top left;
+}
+
+@media (min-width: 1024px) {
+  .pipeline-track-fill {
+    --fill-from-x: 0;
+    --fill-from-y: 1;
+  }
+}
+
+.pipeline-badge {
+  opacity: 0;
+}
+
+.pipeline[data-run="true"] .pipeline-track-fill {
+  animation: pipeline-fill var(--track-duration) var(--ease-in-out) var(--track-delay) both;
+}
+
+.pipeline[data-run="true"] .pipeline-node {
+  animation: pipeline-node-lit 560ms var(--ease-expo-out) var(--node-delay) both;
+}
+
+.pipeline[data-run="true"] .pipeline-node-core {
+  animation: pipeline-core-lit 200ms var(--ease-out) var(--node-delay) both;
+}
+
+.pipeline[data-run="true"] .pipeline-card {
+  animation: pipeline-card-lit 900ms var(--ease-expo-out) var(--node-delay) both;
+}
+
+.pipeline[data-run="true"] .pipeline-spec {
+  animation: pipeline-spec-lit 1100ms var(--ease-out) var(--node-delay) both;
+}
+
+.pipeline[data-run="true"] .pipeline-badge {
+  animation: pipeline-badge-in 420ms var(--ease-expo-out)
+    calc(var(--node-delay) + 140ms) both;
+}
+
+.pipeline[data-run="true"] .pipeline-badge + .pipeline-badge {
+  animation-delay: calc(var(--node-delay) + 280ms);
+}
+
 [data-entered="true"] .hero-enter {
   animation: var(--animate-hero-enter);
 }
