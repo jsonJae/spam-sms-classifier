@@ -195,122 +195,291 @@
   }
 }
 
-/* Model pipeline: one signal pulse travels stage to stage */
-@keyframes pipeline-fill {
-  from {
-    transform: scale(var(--fill-from-x, 1), var(--fill-from-y, 0));
-  }
-  to {
-    transform: scale(1, 1);
-  }
-}
-
-@keyframes pipeline-node-lit {
-  0% {
-    transform: scale(1);
-    background-color: var(--color-card);
-    box-shadow: 0 0 0 0 rgba(255, 92, 26, 0.45);
-  }
-  45% {
-    transform: scale(1.28);
-    background-color: var(--color-primary);
-    box-shadow: 0 0 0 8px rgba(255, 92, 26, 0.18);
-  }
-  100% {
-    transform: scale(1);
-    background-color: var(--color-primary);
-    box-shadow: 0 0 0 0 rgba(255, 92, 26, 0);
-  }
-}
-
-@keyframes pipeline-core-lit {
-  to {
-    background-color: var(--color-ink);
-  }
-}
-
-@keyframes pipeline-card-lit {
-  0%,
-  100% {
-    translate: 0 0;
-    border-color: var(--color-ink);
-    box-shadow: 5px 5px 0 0 var(--color-ink);
-  }
-  35% {
-    translate: -2px -2px;
-    border-color: var(--color-primary);
-    box-shadow: 7px 7px 0 0 var(--color-primary);
-  }
-}
-
-@keyframes pipeline-spec-lit {
-  0% {
-    background-color: var(--color-paper);
-  }
-  35% {
-    background-color: rgba(255, 92, 26, 0.14);
-  }
-  100% {
-    background-color: var(--color-paper);
-  }
-}
-
-@keyframes pipeline-badge-in {
+/* Live trace: a message moves through the real pipeline */
+@keyframes trace-in {
   from {
     opacity: 0;
-    transform: scale(0.6) translateY(4px);
+    translate: 0 6px;
+    filter: blur(3px);
   }
   to {
     opacity: 1;
-    transform: scale(1) translateY(0);
+    translate: 0 0;
+    filter: blur(0);
   }
 }
 
-.pipeline-track-fill {
-  --fill-from-x: 1;
-  --fill-from-y: 0;
-  transform: scale(var(--fill-from-x), var(--fill-from-y));
-  transform-origin: top left;
-}
-
-@media (min-width: 1024px) {
-  .pipeline-track-fill {
-    --fill-from-x: 0;
-    --fill-from-y: 1;
+@keyframes trace-token-in {
+  from {
+    opacity: 0;
+    translate: 0 5px;
+    scale: 0.92;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+    scale: 1;
   }
 }
 
-.pipeline-badge {
+@keyframes trace-strike {
+  from {
+    text-decoration-color: transparent;
+    opacity: 1;
+  }
+  to {
+    text-decoration-color: var(--color-danger);
+    opacity: 0.42;
+  }
+}
+
+@keyframes trace-stamp {
+  0% {
+    opacity: 0;
+    scale: 1.9;
+    rotate: -14deg;
+  }
+  55% {
+    opacity: 1;
+    scale: 0.93;
+    rotate: -2deg;
+  }
+  100% {
+    opacity: 1;
+    scale: 1;
+    rotate: -4deg;
+  }
+}
+
+@keyframes trace-pulse {
+  0%,
+  100% {
+    scale: 1;
+    opacity: 1;
+  }
+  50% {
+    scale: 1.6;
+    opacity: 0.35;
+  }
+}
+
+@keyframes flow-draw {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.trace-in {
+  animation: trace-in 480ms var(--ease-expo-out) both;
+}
+
+.trace-token {
+  animation: trace-token-in 320ms var(--ease-expo-out) both;
+  animation-delay: calc(var(--i, 0) * 26ms);
+}
+
+.trace-token[data-stop="true"] {
+  text-decoration-line: line-through;
+  text-decoration-thickness: 2px;
+  animation:
+    trace-token-in 320ms var(--ease-expo-out) both,
+    trace-strike 360ms var(--ease-out) forwards;
+  animation-delay:
+    calc(var(--i, 0) * 26ms),
+    calc(var(--i, 0) * 26ms + 380ms);
+}
+
+.trace-stamp {
+  animation: trace-stamp 560ms var(--ease-expo-out) both;
+  rotate: -4deg;
+}
+
+.trace-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: trace-pulse 1.1s ease-in-out infinite;
+}
+
+.flow-ribbons {
+  clip-path: inset(0 100% 0 0);
+}
+
+.flow[data-drawn="true"] .flow-ribbons {
+  animation: flow-draw 1400ms var(--ease-in-out) 120ms both;
+}
+
+.flow-label {
   opacity: 0;
 }
 
-.pipeline[data-run="true"] .pipeline-track-fill {
-  animation: pipeline-fill var(--track-duration) var(--ease-in-out) var(--track-delay) both;
+@keyframes flow-label-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+    filter: blur(3px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
 }
 
-.pipeline[data-run="true"] .pipeline-node {
-  animation: pipeline-node-lit 560ms var(--ease-expo-out) var(--node-delay) both;
+.flow[data-drawn="true"] .flow-label {
+  animation: flow-label-in 520ms var(--ease-expo-out) both;
+  animation-delay: var(--d, 0ms);
 }
 
-.pipeline[data-run="true"] .pipeline-node-core {
-  animation: pipeline-core-lit 200ms var(--ease-out) var(--node-delay) both;
+/* FAQ: live answer console */
+@keyframes faq-reveal {
+  from {
+    -webkit-mask-position: 0 100%;
+    mask-position: 0 100%;
+    translate: 0 6px;
+  }
+  to {
+    -webkit-mask-position: 0 0;
+    mask-position: 0 0;
+    translate: 0 0;
+  }
 }
 
-.pipeline[data-run="true"] .pipeline-card {
-  animation: pipeline-card-lit 900ms var(--ease-expo-out) var(--node-delay) both;
+@keyframes faq-row-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
-.pipeline[data-run="true"] .pipeline-spec {
-  animation: pipeline-spec-lit 1100ms var(--ease-out) var(--node-delay) both;
+.faq-row {
+  transition:
+    translate 460ms var(--ease-expo-out),
+    box-shadow 460ms var(--ease-expo-out),
+    border-color 200ms;
 }
 
-.pipeline[data-run="true"] .pipeline-badge {
-  animation: pipeline-badge-in 420ms var(--ease-expo-out)
-    calc(var(--node-delay) + 140ms) both;
+.faq[data-shown="false"] .faq-row {
+  opacity: 0;
 }
 
-.pipeline[data-run="true"] .pipeline-badge + .pipeline-badge {
-  animation-delay: calc(var(--node-delay) + 280ms);
+.faq[data-shown="true"] .faq-row {
+  animation: faq-row-in 640ms var(--ease-expo-out) backwards;
+  animation-delay: calc(var(--i, 0) * 70ms + 60ms);
+}
+
+/* The open question lifts out of the panel on the system's hard shadow. */
+.faq-row[data-open="true"] {
+  z-index: 10;
+  translate: -4px -4px;
+  border-radius: 10px;
+  border-bottom-color: transparent;
+  box-shadow:
+    0 0 0 2px var(--color-ink),
+    8px 8px 0 2px var(--color-ink);
+}
+
+.faq-q {
+  transition: background-color 200ms;
+}
+
+.faq-row:not([data-open="true"]) .faq-q:hover {
+  background-color: color-mix(in srgb, var(--color-paper) 75%, transparent);
+}
+
+.faq-q > span:first-child {
+  transition: opacity 320ms var(--ease-out);
+}
+
+.faq[data-has-open="true"] .faq-row:not([data-open="true"]) .faq-q > span:first-child {
+  opacity: 0.6;
+}
+
+.faq[data-has-open="true"] .faq-row:not([data-open="true"]) .faq-q:hover > span:first-child,
+.faq[data-has-open="true"] .faq-row:not([data-open="true"]) .faq-q:focus-visible > span:first-child {
+  opacity: 1;
+}
+
+.faq-toggle {
+  transition:
+    translate 200ms var(--ease-out),
+    background-color 220ms,
+    box-shadow 220ms;
+}
+
+.faq-toggle svg {
+  transition: rotate 460ms var(--ease-expo-out);
+}
+
+.faq-row[data-open="true"] .faq-toggle svg {
+  rotate: 135deg;
+}
+
+.faq-q:hover .faq-toggle {
+  translate: -1px -1px;
+  box-shadow: 2px 2px 0 0 var(--color-ink);
+}
+
+.faq-row[data-open="true"] .faq-toggle {
+  background-color: var(--color-primary);
+  box-shadow: 2px 2px 0 0 var(--color-ink);
+}
+
+/* Reading line: sweeps under the open question while the answer wipes in. */
+.faq-progress {
+  position: absolute;
+  inset-inline: 1.25rem;
+  bottom: 0;
+  height: 2px;
+  border-radius: 9999px;
+  background: var(--color-primary);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 200ms var(--ease-out);
+}
+
+@media (min-width: 640px) {
+  .faq-progress {
+    inset-inline: 1.75rem;
+  }
+}
+
+.faq-row[data-open="true"] .faq-progress {
+  transform: scaleX(1);
+  transition: transform 900ms var(--ease-in-out) 60ms;
+}
+
+.faq-panel {
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 500ms var(--ease-expo-out);
+}
+
+.faq-row[data-open="true"] .faq-panel {
+  grid-template-rows: 1fr;
+}
+
+/* The mask is three times the answer's height: solid at the top third,
+   clear at the bottom third. Sliding it from bottom to top wipes the answer
+   in line by line with a soft leading edge. */
+.faq-answer {
+  -webkit-mask-image: linear-gradient(to bottom, #000 33.4%, transparent 66.6%);
+  mask-image: linear-gradient(to bottom, #000 33.4%, transparent 66.6%);
+  -webkit-mask-size: 100% 300%;
+  mask-size: 100% 300%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: 0 0;
+  mask-position: 0 0;
+}
+
+.faq-row[data-open="true"] .faq-answer {
+  animation: faq-reveal 1000ms var(--ease-out) 120ms both;
 }
 
 [data-entered="true"] .hero-enter {
