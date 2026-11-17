@@ -28,7 +28,7 @@ export function ThreatSignals() {
   return (
     <section
       id="signals"
-      className="mt-20 scroll-mt-28 border-t-2 border-ink pt-12 sm:mt-24"
+      className="scroll-mt-28"
     >
       <div className="flex flex-wrap items-end justify-between gap-6">
         <div className="max-w-xl">
