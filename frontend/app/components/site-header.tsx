@@ -189,7 +189,6 @@ export function SiteHeader() {
                 className={`size-5 transition-[width,height] duration-[380ms] ${
                   scrolled ? "lg:size-4" : ""
                 }`}
-                animated
               />
             </span>
             <span className="font-display text-base font-bold tracking-tight text-ink sm:text-lg">
