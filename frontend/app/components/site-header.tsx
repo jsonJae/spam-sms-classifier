@@ -7,6 +7,7 @@ const NAV_LINKS = [
   { href: "#top", target: "top", label: "About" },
   { href: "#scan", target: "scan", label: "Scanner" },
   { href: "#signals", target: "signals", label: "Docs" },
+  { href: "#faq", target: "faq", label: "FAQ" },
 ];
 
 const SECTION_IDS = NAV_LINKS.map((link) => link.target);

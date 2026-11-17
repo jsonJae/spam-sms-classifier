@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { Faq } from "./components/faq";
 import { HeroSection } from "./components/hero-section";
 import { ModelPipeline } from "./components/model-pipeline";
 import { type Prediction } from "./components/result-card";
@@ -195,6 +196,11 @@ export default function Home() {
               </div>
             </div>
           </section>
+        </SlideReveal>
+
+        {/* FAQ */}
+        <SlideReveal delay={60}>
+          <Faq />
         </SlideReveal>
       </main>
 
