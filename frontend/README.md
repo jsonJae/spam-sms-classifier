@@ -66,6 +66,12 @@ flowchart LR
 | `app/components/hero-section.tsx` | Hero copy and radar placement. |
 | `app/components/tactical-radar.tsx` | Canvas radar demo and sample selection. |
 | `app/components/threat-signals.tsx` | Static cards explaining link, urgency, and bait patterns. |
+| `app/components/model-pipeline.tsx` | "How the model decides" section: heading, live trace, training data. |
+| `app/components/pipeline-trace.tsx` | Runs a preset or the last scan through the four pipeline stages. Tokens are computed in the browser; the score comes from `/predict` (or the last scan's result). Falls back to tokens only when the API is offline. |
+| `app/components/training-flow.tsx` | Proportional flow chart of the training data, from the two sources to the 80/20 split, with test metrics. |
+| `app/components/faq.tsx` | Centered FAQ accordion. Arrow keys, Home, and End move between questions; `/#faq-N` links open and scroll to an answer. |
+| `app/lib/predict.ts` | Shared `/predict` request used by the scanner and the trace, plus P(spam) and decision-score helpers. |
+| `app/lib/stop-words.ts` | scikit-learn's English stop-word list and a tokenizer matching the model's `TfidfVectorizer`. Regenerate if the vectorizer settings change. |
 | `app/components/splash.tsx` | Animated loading screen with reduced-motion handling. |
 | `app/components/site-header.tsx` | Sticky header and scan link. |
 | `app/components/site-footer.tsx` | Footer and endpoint list. |
