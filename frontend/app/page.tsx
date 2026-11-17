@@ -12,10 +12,7 @@ import { SlideReveal } from "./components/slide-reveal";
 import { Splash } from "./components/splash";
 import { ThreatSignals } from "./components/threat-signals";
 import { VerdictSection } from "./components/verdict-section";
-
-const API_ENDPOINT = process.env.NEXT_PUBLIC_API_URL
-  ? `${process.env.NEXT_PUBLIC_API_URL}/predict`
-  : "/api/predict";
+import { requestPrediction } from "./lib/predict";
 
 export default function Home() {
   const [text, setText] = useState("");
@@ -79,25 +76,7 @@ export default function Home() {
     setAnalyzedText(targetText);
 
     try {
-      const response = await fetch(API_ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: targetText }),
-      });
-
-      if (!response.ok) {
-        const body = (await response.json().catch(() => null)) as {
-          detail?: unknown;
-        } | null;
-        throw new Error(
-          typeof body?.detail === "string"
-            ? body.detail
-            : "The classification engine could not process that message.",
-        );
-      }
-
-      const data = (await response.json()) as Prediction;
-      setResult(data);
+      setResult(await requestPrediction(targetText));
     } catch (err) {
       setError(
         err instanceof Error
@@ -128,80 +107,67 @@ export default function Home() {
       {/* Hero */}
       <HeroSection />
 
-      {/* Scanner Main Section */}
-      <main
-        id="scan"
-        className="relative z-10 mx-auto w-full max-w-6xl scroll-mt-28 px-4 pt-12 pb-20 sm:px-8 sm:pt-16"
-      >
-        <SlideReveal>
-          <div className="grid gap-8 lg:grid-cols-[1.08fr_0.92fr] lg:items-start">
-            <ScannerForm
-              text={text}
-              loading={loading}
-              canSubmit={canSubmit}
-              onTextChange={handleTextChange}
-              onReset={reset}
-              onSubmit={handleSubmit}
-            />
+      <main className="relative z-10">
+        {/* Scanner */}
+        <section
+          id="scan"
+          aria-label="Message scanner"
+          className="mx-auto w-full max-w-6xl scroll-mt-28 px-4 pt-12 pb-20 sm:px-8 sm:pt-16 sm:pb-28"
+        >
+          <SlideReveal>
+            <div className="grid gap-8 lg:grid-cols-[1.08fr_0.92fr] lg:items-start">
+              <ScannerForm
+                text={text}
+                loading={loading}
+                canSubmit={canSubmit}
+                onTextChange={handleTextChange}
+                onReset={reset}
+                onSubmit={handleSubmit}
+              />
 
-            <VerdictSection
-              loading={loading}
-              error={error}
-              result={result}
-              analyzedText={analyzedText}
-              onRetry={executeScan}
-            />
-          </div>
-        </SlideReveal>
-
-        {/* Threat Signals */}
-        <SlideReveal delay={60}>
-          <ThreatSignals />
-        </SlideReveal>
-
-        {/* Model pipeline */}
-        <SlideReveal delay={60}>
-          <ModelPipeline />
-        </SlideReveal>
-
-        {/* Privacy, Documentation & Architecture */}
-        <SlideReveal delay={60}>
-          <section id="docs" className="mt-16 scroll-mt-28 rounded-xl border-2 border-ink bg-paper/80 p-5 sm:p-8">
-            <div className="grid gap-6 md:grid-cols-3">
-              <div>
-                <h4 className="font-display text-lg font-bold text-ink">
-                  Zero persistence
-                </h4>
-                <p className="mt-1 text-xs leading-relaxed text-muted-foreground sm:text-sm">
-                  Message payloads are processed in memory and discarded immediately. No logs, databases, or cookies track your scans.
-                </p>
-              </div>
-
-              <div>
-                <h4 className="font-display text-lg font-bold text-ink">
-                  Scikit-Learn + FastAPI
-                </h4>
-                <p className="mt-1 text-xs leading-relaxed text-muted-foreground sm:text-sm">
-                  Trained on real-world SMS corpora. TF-IDF tokenization generates calibrated probabilistic verdicts.
-                </p>
-              </div>
-
-              <div>
-                <h4 className="font-display text-lg font-bold text-ink">
-                  Sub-20ms evaluation
-                </h4>
-                <p className="mt-1 text-xs leading-relaxed text-muted-foreground sm:text-sm">
-                  Built for quick decisions before you answer phone prompts, verify accounts, or tap unknown links.
-                </p>
-              </div>
+              <VerdictSection
+                loading={loading}
+                error={error}
+                result={result}
+                analyzedText={analyzedText}
+                onRetry={executeScan}
+              />
             </div>
-          </section>
-        </SlideReveal>
+          </SlideReveal>
+        </section>
+
+        {/* Threat signals */}
+        <div className="mx-auto w-full max-w-6xl px-4 sm:px-8">
+          <div className="border-t-2 border-ink pt-12 pb-20 sm:pt-16 sm:pb-24">
+            <SlideReveal delay={60}>
+              <ThreatSignals />
+            </SlideReveal>
+          </div>
+        </div>
+
+        {/* Model pipeline, training data, privacy */}
+        <div className="mx-auto w-full max-w-6xl px-4 sm:px-8">
+          <div className="border-t-2 border-ink pt-12 pb-20 sm:pt-16 sm:pb-24">
+            <SlideReveal delay={60}>
+              <ModelPipeline
+                lastScan={
+                  result && analyzedText
+                    ? { text: analyzedText, prediction: result }
+                    : null
+                }
+              />
+            </SlideReveal>
+          </div>
+        </div>
 
         {/* FAQ */}
-        <SlideReveal delay={60}>
-          <Faq />
-        </SlideReveal>
+        <div className="mx-auto w-full max-w-6xl px-4 sm:px-8">
+          <div className="border-t-2 border-ink pt-12 pb-20 sm:pt-16 sm:pb-24">
+            <SlideReveal delay={60}>
+              <Faq />
+            </SlideReveal>
+          </div>
+        </div>
       </main>
 
       {/* Footer */}
